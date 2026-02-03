@@ -14,7 +14,7 @@
   //set to true to display the title
   displaytitle: true,
   //Enter a title, if no title is specified, the webmap's title is used.
-  title: "EJScreen<span style='font-size: 10pt;'>&nbsp;&nbsp; Environmental Justice Screening and Mapping Tool (" + versionText + ")</span>",
+  title: "&nbsp;EJScreen<span style='font-size: 10pt;'>&nbsp;&nbsp; Environmental Justice Screening and Mapping Tool (" + versionText + ")</span>",
   //Enter a description for the application. This description will appear in the left pane
   //if no description is entered the webmap description will be used.
   description: "",
