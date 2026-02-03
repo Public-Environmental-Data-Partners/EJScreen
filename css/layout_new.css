@@ -1170,3 +1170,44 @@ color:black;
 	.bold-link {
     font-weight: bold;
    }
+
+   /* CSS */
+.feedback-button {
+  /* Layout & Sizing */
+  display: inline-flex;
+  align-items: center;
+  padding: 6px 12px;
+  gap: 2px;
+  text-decoration: none;
+  border-radius: 4px;
+
+  /* Colors */
+  background-color: #FFCD00; /* Vibrant Gold/Yellow */
+  color: #004A99;            /* Deep Blue text */
+
+  /* Typography */
+  font-family: "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  font-weight: 700;
+  font-size: 12px;
+  
+  /* Smooth transition for hover */
+  transition: background-color 0.2s ease;
+}
+
+.feedback-button:hover {
+  background-color: #E6B800; /* Slightly darker on hover */
+}
+
+.external-icon {
+  width: 12px;
+  height: 12px;
+  margin-top: 1px; /* Slight alignment tweak */
+}
+
+.data-button {
+    /* Positioning - Sticks to bottom right */
+  position: fixed;
+  bottom: 20px; /* Indent from bottom */
+  right: 5vw;  /* Indent from right */
+  z-index: 1000; /* Keeps it above other elements */
+}
