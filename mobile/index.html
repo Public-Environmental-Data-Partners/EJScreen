@@ -159,6 +159,40 @@
         .calcite-maps .esri-widget .esri-widget-button:hover {
             background-color: #333;
         }
+
+        /* CSS */
+        .feedback-button {
+            /* Layout & Sizing */
+            display: inline;
+            align-items: center;
+            padding: 6px 12px;
+            gap: 40px;
+            text-decoration: none;
+            border-radius: 40px;
+
+            /* Colors */
+            background-color: #FFCD00; /* Vibrant Gold/Yellow */
+            color: #004A99;            /* Deep Blue text */
+
+            /* Typography */
+            
+            font-weight: 700;
+            font-size: 12px;
+            
+            /* Smooth transition for hover */
+            transition: background-color 0.2s ease;
+        }
+
+        .feedback-button:hover {
+            background-color: #E6B800; /* Slightly darker on hover */
+        }
+
+        .external-icon {
+            width: 12px;
+            height: 12px;
+            margin-top: 1px; /* Slight alignment tweak */
+        }
+
     </style>
     <!-- Google Tag Manager -->
     <noscript><iframe src="//www.googletagmanager.com/ns.html?id=GTM-L8ZB" height="0" width="0"
@@ -200,7 +234,10 @@
                             class="glyphicon glyphicon-th-large"></span> Basemaps</a></li>
                 <li><a href="javascript: void(0);" data-toggle="modal" data-target="#myModal"><span
                             class="glyphicon glyphicon-info-sign"></span> About EJScreen</a></li>
-            </ul>
+                <li><a href="https://forms.gle/THDYe5R4Aeh5iV6X7" target="_blank" class="feedback-button">  Share data feedback  <svg class="external-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">    <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>    <polyline points="15 3 21 3 21 9"></polyline>    <line x1="10" y1="14" x2="21" y2="3"></line>  </svg></a>                        </li>
+                <li><a href="https://forms.gle/gvvgCA4PkLShXNXD8" target="_blank" class="feedback-button">  Help improve the tool  <svg class="external-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">    <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>    <polyline points="15 3 21 3 21 9"></polyline>    <line x1="10" y1="14" x2="21" y2="3"></line>  </svg></a> </div>
+                        </li>
+                            </ul>
         </div>
         <!-- Title -->
         <div class="calcite-title calcite-overflow-hidden">
@@ -416,8 +453,7 @@
                 </div>
                 <div class="modal-body">
                     <p><b>This is an unofficial copy of EJScreen</b>, hosted by the <a href="https://screening-tools.com/" target="_blank">
-                        Public Environmental Data Partners</a>. 
-                        We are working on an overhaul, but in the meantime some links and text may incorrectly suggest that this site is affiliated with the US Government.
+                        Public Environmental Data Partners</a>. Some links and text may incorrectly suggest that this site is affiliated with the US Government.
                     </p>
                     <p> EJScreen is a screening tool for pre-decisional use only. It can help identify areas
                     that may warrant additional consideration, analysis, or outreach. It does not provide a basis for
