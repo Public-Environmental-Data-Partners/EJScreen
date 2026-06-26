@@ -351,10 +351,14 @@ define(
                     // "Select an Area": attributes.fips may be a comma-separated list of
                     // up to 5 codes; add each as its OWN site (each FIPS is separate).
                     var namestr = this.currentGraphic.attributes["fips"];
+                    if (namestr === null || namestr === undefined || String(namestr).trim() === "") {
+                        alert("This selected area has no FIPS code to add.");
+                        return;
+                    }
                     var fipsList = String(namestr).split(",");
                     for (var i = 0; i < fipsList.length; i++) {
                         var f = fipsList[i].trim();
-                        if (f) { window.EJmultisite.add({ type: "fips", label: (label || f), fips: f }); }
+                        if (f && f !== "undefined") { window.EJmultisite.add({ type: "fips", label: (label || f), fips: f }); }
                     }
                 } else if (gtype == "point") {
                     if (!(parseFloat(radius) > 0)) {
@@ -365,11 +369,18 @@ define(
                     window.EJmultisite.add({ type: "point", label: label, lon: parseFloat(p[0]), lat: parseFloat(p[1]), radius: radius });
                 } else if (gtype == "polygon") {
                     var matches = geomString.match(/[^,]+,[^,]+/g);
+                    if (!matches || matches.length < 3) {
+                        alert("This area doesn't have enough points to form a polygon.");
+                        return;
+                    }
                     var listCoords = [];
-                    for (var j in matches) {
+                    for (var j = 0; j < matches.length; j++) {
                         var pp = matches[j].split(",");
                         listCoords.push([parseFloat(pp[0]), parseFloat(pp[1])]);
                     }
+                    // GeoJSON polygon rings must be closed (first point == last point).
+                    var first = listCoords[0], last = listCoords[listCoords.length - 1];
+                    if (first[0] !== last[0] || first[1] !== last[1]) { listCoords.push([first[0], first[1]]); }
                     var feature = { "type": "Feature", "properties": {}, "geometry": { "type": "Polygon", "coordinates": [listCoords] } };
                     window.EJmultisite.add({ type: "polygon", label: label, feature: feature, radius: radius });
                 } else {
