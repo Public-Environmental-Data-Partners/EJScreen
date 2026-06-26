@@ -337,6 +337,45 @@ define(
                 dijit.byId('ejwg')._showEJpane(graphic);
 
             },
+            _addToMultisite: function(e) {
+                // Snapshot the current selection into the multisite basket (multisite.js).
+                // Mirrors getEJReport()'s per-type parsing of the popup form/graphic.
+                if (typeof window.EJmultisite === "undefined") { return; }
+                var frm = document.getElementById("infoform");
+                var gtype = frm.type.value;
+                var geomString = frm.coords.value;
+                var label = (frm.ptitle && frm.ptitle.value) ? frm.ptitle.value : "";
+                var radius = (frm.radius && frm.radius.value) ? parseFloat(frm.radius.value) : 0;
+
+                if (this._isKnownGeo(gtype)) {
+                    // "Select an Area": attributes.fips may be a comma-separated list of
+                    // up to 5 codes; add each as its OWN site (each FIPS is separate).
+                    var namestr = this.currentGraphic.attributes["fips"];
+                    var fipsList = String(namestr).split(",");
+                    for (var i = 0; i < fipsList.length; i++) {
+                        var f = fipsList[i].trim();
+                        if (f) { window.EJmultisite.add({ type: "fips", label: (label || f), fips: f }); }
+                    }
+                } else if (gtype == "point") {
+                    if (!(parseFloat(radius) > 0)) {
+                        alert("Please specify a buffer greater than 0 before adding a point.");
+                        return;
+                    }
+                    var p = geomString.split(",");
+                    window.EJmultisite.add({ type: "point", label: label, lon: parseFloat(p[0]), lat: parseFloat(p[1]), radius: radius });
+                } else if (gtype == "polygon") {
+                    var matches = geomString.match(/[^,]+,[^,]+/g);
+                    var listCoords = [];
+                    for (var j in matches) {
+                        var pp = matches[j].split(",");
+                        listCoords.push([parseFloat(pp[0]), parseFloat(pp[1])]);
+                    }
+                    var feature = { "type": "Feature", "properties": {}, "geometry": { "type": "Polygon", "coordinates": [listCoords] } };
+                    window.EJmultisite.add({ type: "polygon", label: label, feature: feature, radius: radius });
+                } else {
+                    alert("This selection type can't be added to a multisite list yet.");
+                }
+            },
             _getEJscreen: function(e) {
                 var rptid = e.target.id;
                 var url = reportsJSON[rptid].reporturl;
