@@ -6,7 +6,8 @@
  * This module adds a small "basket" so the user can keep several selections and
  * then either:
  *   1) "Multisite Report" — open an EJAM-style aggregate report on ALL of them
- *      via the EJAM API  GET /report?...&sitenumber=0  (points or FIPS), or
+ *      via the EJAM API: GET /report?...&sitenumber=0 for points/FIPS, or a
+ *      POST /report with a GeoJSON FeatureCollection for drawn polygons, or
  *   2) "Send to EJAM" — POST the set to the EJAM API /handoff and open the full
  *      EJAM app pre-loaded with those places (supports polygons too).
  *
@@ -47,12 +48,9 @@
         panel.querySelector("[data-ejms-count]").textContent =
             items.length + " " + (TYPE_LABEL[type] || "place") + (items.length === 1 ? "" : "s") + " selected";
         panel.querySelector("[data-ejms-list]").innerHTML = "<ul style='margin:4px 0;padding-left:18px;'>" + listHtml + "</ul>";
-        // The Multisite Report button only supports points/FIPS for now (GET).
         var reportBtn = panel.querySelector("[data-ejms-report]");
-        reportBtn.disabled = (type === "polygon");
-        reportBtn.title = (type === "polygon")
-            ? "Drawn-area multisite reports aren't available via this button yet — use Send to EJAM."
-            : "Open an EJAM multisite report on all selected places";
+        reportBtn.disabled = false;
+        reportBtn.title = "Open an EJAM multisite report on all selected places";
     }
 
     function escapeHtml(s) {
@@ -104,10 +102,9 @@
     function runReport() {
         if (!items.length) { alert("Add at least one place to the list first."); return; }
         var type = items[0].type;
-        if (type === "polygon") {
-            alert("Multisite reports for drawn areas (polygons) aren't available via this button yet. Use \"Send to EJAM\" to open the EJAM app with these areas.");
-            return;
-        }
+        // Polygons can't fit in a GET URL, so they go via POST (see runReportPost).
+        if (type === "polygon") { runReportPost(); return; }
+        // Points and FIPS fit in a GET URL, so open the report directly in a new tab.
         var query;
         if (type === "point") {
             var lats = items.map(function (d) { return d.lat; }).join(",");
@@ -119,6 +116,32 @@
             query = "?fips=" + encodeURIComponent(fipsAll) + "&sitenumber=0&fileextension=html";
         }
         window.open(REPORT_URL + query);
+    }
+
+    function runReportPost() {
+        // POST the polygon set (no URL-length limit) and render the returned HTML.
+        // Open the tab synchronously on the click so it isn't popup-blocked, then
+        // stream the report into it once the request resolves.
+        var w = window.open("", "_blank");
+        if (w) { try { w.document.write("<!doctype html><meta charset='utf-8'><p style='font:14px sans-serif;padding:1rem'>Generating multisite report…</p>"); } catch (e) {} }
+        var payload = {
+            shape: JSON.stringify({ type: "FeatureCollection", features: items.map(function (d) { return d.feature; }) }),
+            buffer: maxRadius() || 0,
+            sitenumber: 0,
+            fileextension: "html"
+        };
+        fetch(REPORT_URL, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(payload)
+        }).then(function (r) { return r.text(); })
+          .then(function (html) {
+              if (w) { w.document.open(); w.document.write(html); w.document.close(); }
+              else { window.open(URL.createObjectURL(new Blob([html], { type: "text/html" }))); }
+          }).catch(function () {
+              if (w) { try { w.document.body.innerHTML = "<p style='font:14px sans-serif;padding:1rem'>Sorry, the multisite report failed. Please try again.</p>"; } catch (e) {} }
+              else { alert("Multisite report failed. Please try again."); }
+          });
     }
 
     function buildHandoffPayload() {
