@@ -21,11 +21,14 @@
 (function () {
     "use strict";
 
-    // Endpoints. REPORT_URL is the EJAM API; EJAM_APP_URL is the full EJAM app
-    // (kept in sync with the "Multisite Tool" link in index.html).
-    var EJAM_API_BASE = "https://ejamapi-84652557241.us-central1.run.app";
+    // Endpoints. Overridable via globals (window.EJAM_API_BASE / window.EJAM_APP_URL)
+    // so dev/stage/prod can be configured without editing this file. Trailing
+    // slashes are normalized. EJAM_APP_URL keeps one trailing slash for "?..." appends.
+    var EJAM_API_BASE = String(window.EJAM_API_BASE || "https://ejamapi-84652557241.us-central1.run.app").replace(/\/+$/, "");
     var REPORT_URL = EJAM_API_BASE + "/report";
-    var EJAM_APP_URL = "https://ejam.publicenvirodata.org/";
+    var EJAM_APP_URL = String(window.EJAM_APP_URL || "https://ejam.publicenvirodata.org/").replace(/\/+$/, "") + "/";
+    // Open external tabs safely (no window.opener -> prevents reverse-tabnabbing).
+    function openExternal(url) { return window.open(url, "_blank", "noopener,noreferrer"); }
 
     var items = [];           // accumulated descriptors
     var panel = null;         // floating UI panel
@@ -115,15 +118,17 @@
             var fipsAll = items.map(function (d) { return d.fips; }).join(",");
             query = "?fips=" + encodeURIComponent(fipsAll) + "&sitenumber=0&fileextension=html";
         }
-        window.open(REPORT_URL + query);
+        openExternal(REPORT_URL + query);
     }
 
     function runReportPost() {
         // POST the polygon set (no URL-length limit) and render the returned HTML.
         // Open the tab synchronously on the click so it isn't popup-blocked, then
-        // stream the report into it once the request resolves.
+        // stream the report into it once the request resolves. We need the handle
+        // to write into it (so can't use noopener), but we null its opener to keep
+        // the returned report page from being able to reach back into this app tab.
         var w = window.open("", "_blank");
-        if (w) { try { w.document.write("<!doctype html><meta charset='utf-8'><p style='font:14px sans-serif;padding:1rem'>Generating multisite report…</p>"); } catch (e) {} }
+        if (w) { try { w.opener = null; w.document.write("<!doctype html><meta charset='utf-8'><p style='font:14px sans-serif;padding:1rem'>Generating multisite report…</p>"); } catch (e) {} }
         var payload = {
             shape: JSON.stringify({ type: "FeatureCollection", features: items.map(function (d) { return d.feature; }) }),
             buffer: maxRadius() || 0,
@@ -137,7 +142,7 @@
         }).then(function (r) { return r.text(); })
           .then(function (html) {
               if (w) { w.document.open(); w.document.write(html); w.document.close(); }
-              else { window.open(URL.createObjectURL(new Blob([html], { type: "text/html" }))); }
+              else { openExternal(URL.createObjectURL(new Blob([html], { type: "text/html" }))); }
           }).catch(function () {
               if (w) { try { w.document.body.innerHTML = "<p style='font:14px sans-serif;padding:1rem'>Sorry, the multisite report failed. Please try again.</p>"; } catch (e) {} }
               else { alert("Multisite report failed. Please try again."); }
@@ -175,7 +180,7 @@
         }).then(function (r) { return r.json(); })
           .then(function (res) {
               if (res && res.token) {
-                  window.open(EJAM_APP_URL + "?handoff=" + encodeURIComponent(res.token));
+                  openExternal(EJAM_APP_URL + "?handoff=" + encodeURIComponent(res.token));
               } else {
                   fallbackDirect(type, payload);
               }
@@ -188,9 +193,9 @@
             var lats = payload.sites.map(function (s) { return s.lat; }).join(",");
             var lons = payload.sites.map(function (s) { return s.lon; }).join(",");
             var q = "?lat=" + lats + "&lon=" + lons + (payload.radius ? "&radius=" + payload.radius : "");
-            window.open(EJAM_APP_URL + q);
+            openExternal(EJAM_APP_URL + q);
         } else if (type === "fips") {
-            window.open(EJAM_APP_URL + "?fips=" + encodeURIComponent(payload.fips.join(",")));
+            openExternal(EJAM_APP_URL + "?fips=" + encodeURIComponent(payload.fips.join(",")));
         } else {
             alert("Couldn't reach the EJAM API to hand off the drawn areas. Please try again in a moment.");
         }

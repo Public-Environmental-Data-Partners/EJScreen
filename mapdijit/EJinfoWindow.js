@@ -366,7 +366,12 @@ define(
                         return;
                     }
                     var p = geomString.split(",");
-                    window.EJmultisite.add({ type: "point", label: label, lon: parseFloat(p[0]), lat: parseFloat(p[1]), radius: radius });
+                    var plon = parseFloat(p[0]), plat = parseFloat(p[1]);
+                    if (!isFinite(plon) || !isFinite(plat)) {
+                        alert("This point has invalid coordinates.");
+                        return;
+                    }
+                    window.EJmultisite.add({ type: "point", label: label, lon: plon, lat: plat, radius: radius });
                 } else if (gtype == "polygon") {
                     var matches = geomString.match(/[^,]+,[^,]+/g);
                     if (!matches || matches.length < 3) {
@@ -376,7 +381,13 @@ define(
                     var listCoords = [];
                     for (var j = 0; j < matches.length; j++) {
                         var pp = matches[j].split(",");
-                        listCoords.push([parseFloat(pp[0]), parseFloat(pp[1])]);
+                        var cx = parseFloat(pp[0]), cy = parseFloat(pp[1]);
+                        if (!isFinite(cx) || !isFinite(cy)) { continue; }  // skip malformed coords
+                        listCoords.push([cx, cy]);
+                    }
+                    if (listCoords.length < 3) {
+                        alert("This area doesn't have enough valid points to form a polygon.");
+                        return;
                     }
                     // GeoJSON polygon rings must be closed (first point == last point).
                     var first = listCoords[0], last = listCoords[listCoords.length - 1];
