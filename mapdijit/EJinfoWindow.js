@@ -54,7 +54,7 @@ define(
 
         var reportsJSON = {
             "ejschart": { "description": "Compare indexes or indicators...", "reporturl": "ejscreen_report.aspx", "category": "ejscreen" },
-            "ejsrpt": { "description": "Get EJScreen report...", "reporturl": "https://ejamapi-84652557241.us-central1.run.app/report", "category": "ejscreen" },
+            "ejsrpt": { "description": "Get EJScreen report...", "reporturl": (window.EJAM_API_BASE || "https://ejamapi-84652557241.us-central1.run.app") + "/report", "category": "ejscreen" },
 			"acs2022": { "description": "Get 2018-2022 ACS report...", "reporturl": "demogreportpdf.aspx?report=acs2022", "category": "demog" },
             "acs2021": { "description": "Get 2017-2021 ACS report...", "reporturl": "demogreportpdf.aspx?report=acs2021", "category": "demog" },
             "acs2019": { "description": "Get 2015-2019 ACS report...", "reporturl": "demogreportpdf.aspx?report=acs2019", "category": "demog" },

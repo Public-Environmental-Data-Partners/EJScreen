@@ -67,6 +67,14 @@ var ejscreenservice_state =  localRESTurl + "EJScreenStatePercentilesBlockGroup/
 var ejscreenApiPageUrl =
 	localRESTurl + "ejscreen/ejscreen_v2024_with_as_cnmi_gu_vi/MapServer/exts/EJCensusReports/GetEJScreen";
 
+// --- EJAM integration endpoints (single source of truth) -------------------
+// Used by multisite.js (Multisite Report + "Send to EJAM" handoff), the
+// "Multisite Tool" link in index.html, and the single-site report in
+// mapdijit/EJinfoWindow.js. Set these per deployment; the inline defaults in
+// those files are just fallbacks if these globals are ever unset.
+window.EJAM_API_BASE = "https://ejamapi-84652557241.us-central1.run.app"; // EJAM REST API base (no trailing /report)
+window.EJAM_APP_URL  = "https://ejam.publicenvirodata.org/";              // live EJAM web app
+
 
 var ejscreenservice4SOE = ejscreenservice;
 //to do: needed still?
