@@ -122,31 +122,40 @@
     }
 
     function runReportPost() {
-        // POST the polygon set (no URL-length limit) and render the returned HTML.
-        // Open the tab synchronously on the click so it isn't popup-blocked, then
-        // stream the report into it once the request resolves. We need the handle
-        // to write into it (so can't use noopener), but we null its opener to keep
-        // the returned report page from being able to reach back into this app tab.
-        var w = window.open("", "_blank");
-        if (w) { try { w.opener = null; w.document.write("<!doctype html><meta charset='utf-8'><p style='font:14px sans-serif;padding:1rem'>Generating multisite report…</p>"); } catch (e) {} }
-        var payload = {
+        // Polygons travel in a POST body (no URL-length limit). Submit them as a real
+        // top-level form navigation targeting a new tab, so the API renders the report
+        // in ITS OWN origin -- exactly like the GET path's window.open() above.
+        //
+        // We deliberately do NOT fetch() the HTML and document.write() it into a blank
+        // tab we opened: that tab inherits EJScreen's origin, so any <script> in the
+        // returned report would execute as EJScreen-origin code (cookies, storage, DOM).
+        // A form navigation lands the response in the API origin instead, sandboxing it
+        // away from EJScreen. The plumber /report endpoint reads named params, so a
+        // form-encoded POST populates shape/buffer/sitenumber/fileextension just like the
+        // former JSON body did.
+        var fields = {
             shape: JSON.stringify({ type: "FeatureCollection", features: items.map(function (d) { return d.feature; }) }),
             buffer: maxRadius() || 0,
             sitenumber: 0,
             fileextension: "html"
         };
-        fetch(REPORT_URL, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(payload)
-        }).then(function (r) { return r.text(); })
-          .then(function (html) {
-              if (w) { w.document.open(); w.document.write(html); w.document.close(); }
-              else { openExternal(URL.createObjectURL(new Blob([html], { type: "text/html" }))); }
-          }).catch(function () {
-              if (w) { try { w.document.body.innerHTML = "<p style='font:14px sans-serif;padding:1rem'>Sorry, the multisite report failed. Please try again.</p>"; } catch (e) {} }
-              else { alert("Multisite report failed. Please try again."); }
-          });
+        var form = document.createElement("form");
+        form.method = "POST";
+        form.action = REPORT_URL;
+        form.target = "_blank";          // render the report in a new tab...
+        form.rel = "noopener";           // ...with no back-reference to this app tab
+        form.acceptCharset = "UTF-8";
+        form.style.display = "none";
+        Object.keys(fields).forEach(function (name) {
+            var input = document.createElement("input");
+            input.type = "hidden";
+            input.name = name;
+            input.value = String(fields[name]);
+            form.appendChild(input);
+        });
+        document.body.appendChild(form);
+        form.submit();
+        document.body.removeChild(form);
     }
 
     function buildHandoffPayload() {
