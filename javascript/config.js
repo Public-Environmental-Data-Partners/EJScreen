@@ -17,7 +17,7 @@
 
 var versionText = "Version 2.3"; //version text label for title etc.
 var versionNumber = "2.3"; //numeric version used in code
-var versionDetailed = "2.3.01"; //detailed version number for dev records, not exposed in app
+var versionDetailed = "2.3.02"; //detailed version number for dev records, not exposed in app
 
 //version history
 //2.2.Beta0 - 6/21/23 - updated mobile map and added version detail to config
@@ -35,6 +35,7 @@ var versionDetailed = "2.3.01"; //detailed version number for dev records, not e
 //2.2.11 - 12/14/23 - updated link for Subsidized Housing to correct index
 
 //8.5.24 - updated to 2.3.01
+//2.3.02 - 6/29/26 - EJAM API/app URLs set here (window.EJAM_API_BASE / window.EJAM_APP_URL); used by multisite tools, the Multisite Tool link, and the single-site report.
 
 //end version history
 
@@ -66,6 +67,14 @@ var ejscreendemogservice = localRESTurl + "ejscreen/ejquery/MapServer";
 var ejscreenservice_state =  localRESTurl + "EJScreenStatePercentilesBlockGroup/FeatureServer/";
 var ejscreenApiPageUrl =
 	localRESTurl + "ejscreen/ejscreen_v2024_with_as_cnmi_gu_vi/MapServer/exts/EJCensusReports/GetEJScreen";
+
+// --- EJAM integration endpoints (single source of truth) -------------------
+// Used by multisite.js (Multisite Report + "Send to EJAM" handoff), the
+// "Multisite Tool" link in index.html, and the single-site report in
+// mapdijit/EJinfoWindow.js. Set these per deployment; the inline defaults in
+// those files are just fallbacks if these globals are ever unset.
+window.EJAM_API_BASE = "https://ejamapi-84652557241.us-central1.run.app"; // EJAM REST API base (no trailing /report)
+window.EJAM_APP_URL  = "https://ejam.publicenvirodata.org/";              // live EJAM web app
 
 
 var ejscreenservice4SOE = ejscreenservice;

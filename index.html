@@ -144,6 +144,7 @@ body, html {
     <script type="text/javascript" src="javascript/config.js"></script>
     <script type="text/javascript" src="javascript/defaults.js"></script>
     <script type="text/javascript" src="javascript/layout_new.js"></script>
+    <script type="text/javascript" src="javascript/multisite.js"></script>
     <script type="text/javascript" src="javascript/tagmanager.js"></script>
 
     <!-- <script language="javascript" type="text/javascript" src="mapdijit/javascript/jquery.min.js"></script> -->
@@ -659,7 +660,7 @@ a[title]:hover:after {
                                              
                                              <tr>
                                                  <td>
-                                                     <div id="multiSiteTool" class="divBtn" style="padding: 0px;" onclick="openPage('https://ejam.publicenvirodata.org/')" title="Multisite Tool">
+                                                     <div id="multiSiteTool" class="divBtn" style="padding: 0px;" onclick="openPage(window.EJAM_APP_URL || 'https://ejam.publicenvirodata.org/')" title="Multisite Tool">
                                                           Multisite Tool
                                                      </div>
                                                  </td>

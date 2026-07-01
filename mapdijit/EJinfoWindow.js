@@ -54,7 +54,7 @@ define(
 
         var reportsJSON = {
             "ejschart": { "description": "Compare indexes or indicators...", "reporturl": "ejscreen_report.aspx", "category": "ejscreen" },
-            "ejsrpt": { "description": "Get EJScreen report...", "reporturl": "https://ejamapi-84652557241.us-central1.run.app/report", "category": "ejscreen" },
+            "ejsrpt": { "description": "Get EJScreen report...", "reporturl": (window.EJAM_API_BASE || "https://ejamapi-84652557241.us-central1.run.app") + "/report", "category": "ejscreen" },
 			"acs2022": { "description": "Get 2018-2022 ACS report...", "reporturl": "demogreportpdf.aspx?report=acs2022", "category": "demog" },
             "acs2021": { "description": "Get 2017-2021 ACS report...", "reporturl": "demogreportpdf.aspx?report=acs2021", "category": "demog" },
             "acs2019": { "description": "Get 2015-2019 ACS report...", "reporturl": "demogreportpdf.aspx?report=acs2019", "category": "demog" },
@@ -336,6 +336,67 @@ define(
                 }
                 dijit.byId('ejwg')._showEJpane(graphic);
 
+            },
+            _addToMultisite: function(e) {
+                // Snapshot the current selection into the multisite basket (multisite.js).
+                // Mirrors getEJReport()'s per-type parsing of the popup form/graphic.
+                if (typeof window.EJmultisite === "undefined") { return; }
+                var frm = document.getElementById("infoform");
+                var gtype = frm.type.value;
+                var geomString = frm.coords.value;
+                var label = (frm.ptitle && frm.ptitle.value) ? frm.ptitle.value : "";
+                var radius = (frm.radius && frm.radius.value) ? parseFloat(frm.radius.value) : 0;
+
+                if (this._isKnownGeo(gtype)) {
+                    // "Select an Area": attributes.fips may be a comma-separated list of
+                    // up to 5 codes; add each as its OWN site (each FIPS is separate).
+                    var namestr = this.currentGraphic.attributes["fips"];
+                    if (namestr === null || namestr === undefined || String(namestr).trim() === "") {
+                        alert("This selected area has no FIPS code to add.");
+                        return;
+                    }
+                    var fipsList = String(namestr).split(",");
+                    for (var i = 0; i < fipsList.length; i++) {
+                        var f = fipsList[i].trim();
+                        if (f && f !== "undefined") { window.EJmultisite.add({ type: "fips", label: (label || f), fips: f }); }
+                    }
+                } else if (gtype == "point") {
+                    if (!(parseFloat(radius) > 0)) {
+                        alert("Please specify a buffer greater than 0 before adding a point.");
+                        return;
+                    }
+                    var p = geomString.split(",");
+                    var plon = parseFloat(p[0]), plat = parseFloat(p[1]);
+                    if (!isFinite(plon) || !isFinite(plat)) {
+                        alert("This point has invalid coordinates.");
+                        return;
+                    }
+                    window.EJmultisite.add({ type: "point", label: label, lon: plon, lat: plat, radius: radius });
+                } else if (gtype == "polygon") {
+                    var matches = geomString.match(/[^,]+,[^,]+/g);
+                    if (!matches || matches.length < 3) {
+                        alert("This area doesn't have enough points to form a polygon.");
+                        return;
+                    }
+                    var listCoords = [];
+                    for (var j = 0; j < matches.length; j++) {
+                        var pp = matches[j].split(",");
+                        var cx = parseFloat(pp[0]), cy = parseFloat(pp[1]);
+                        if (!isFinite(cx) || !isFinite(cy)) { continue; }  // skip malformed coords
+                        listCoords.push([cx, cy]);
+                    }
+                    if (listCoords.length < 3) {
+                        alert("This area doesn't have enough valid points to form a polygon.");
+                        return;
+                    }
+                    // GeoJSON polygon rings must be closed (first point == last point).
+                    var first = listCoords[0], last = listCoords[listCoords.length - 1];
+                    if (first[0] !== last[0] || first[1] !== last[1]) { listCoords.push([first[0], first[1]]); }
+                    var feature = { "type": "Feature", "properties": {}, "geometry": { "type": "Polygon", "coordinates": [listCoords] } };
+                    window.EJmultisite.add({ type: "polygon", label: label, feature: feature, radius: radius });
+                } else {
+                    alert("This selection type can't be added to a multisite list yet.");
+                }
             },
             _getEJscreen: function(e) {
                 var rptid = e.target.id;
