@@ -146,7 +146,11 @@
             var rooturl = location.protocol + "//" + location.host + pname + "/";
 
             var ejscreenSOEbrokerurl = rooturl + "ejscreenRESTbroker.aspx";
-            var ejscreenReportfile = "https://ejamapi-84652557241.us-central1.run.app/report";
+            // Build from the centralized base in javascript/config.js (loaded above);
+            // the literal is only a fallback if that global is ever unset. Trailing
+            // slashes are normalized (same idiom as javascript/multisite.js) so a
+            // configured base ending in "/" cannot produce "//report".
+            var ejscreenReportfile = String(window.EJAM_API_BASE || "https://ejamapi-84652557241.us-central1.run.app").replace(/\/+$/, "") + "/report";
             var charLimit = 2048;
 
             var typedesc = {
