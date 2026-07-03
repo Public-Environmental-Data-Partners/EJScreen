@@ -15,9 +15,12 @@
 
 //There are constants used from config.js file too
 
-var versionText = "Version 2.3"; //version text label for title etc.
-var versionNumber = "2.3"; //numeric version used in code
-var versionDetailed = "2.3.02"; //detailed version number for dev records, not exposed in app
+// Version now tracks the EJAM release this EJScreen deployment is based on
+// (EJAM v3.YYYY.P, where YYYY is the ACS end-year vintage), so the header,
+// report labels, and print footer all reflect the same release line.
+var versionText = "Version 3.2022.1"; //version text label for title etc.
+var versionNumber = "3.2022.1"; //numeric version used in code
+var versionDetailed = "3.2022.1.01"; //detailed version number for dev records, not exposed in app
 
 //version history
 //2.2.Beta0 - 6/21/23 - updated mobile map and added version detail to config
