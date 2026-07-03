@@ -73,7 +73,7 @@ var ejscreenApiPageUrl =
 // "Multisite Tool" link in index.html, and the single-site report in
 // mapdijit/EJinfoWindow.js. Set these per deployment; the inline defaults in
 // those files are just fallbacks if these globals are ever unset.
-window.EJAM_API_BASE = "https://ejamapi-84652557241.us-central1.run.app"; // EJAM REST API base (no trailing /report)
+window.EJAM_API_BASE = "https://api.ejanalysis.com"; // EJAM REST API base (no trailing /report); Cloudflare proxy of the Cloud Run API -- report responses can be edge-cached (repeat reports in ms) and CORS is handled at the edge
 window.EJAM_APP_URL  = "https://ejam.publicenvirodata.org/";              // live EJAM web app
 
 
