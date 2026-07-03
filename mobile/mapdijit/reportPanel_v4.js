@@ -169,7 +169,7 @@ define(
                 //frm.submit();
                 // noopener/noreferrer prevents the opened origin from reaching
                 // window.opener (reverse tabnabbing), as in javascript/multisite.js.
-                window.open(ejscreenReportfile + "?" + queryString, "_blank", "noopener,noreferrer")
+                window.open(ejscreenReportfile + "?" + queryString, "_blank", "noopener,noreferrer");
             }
         },
        
