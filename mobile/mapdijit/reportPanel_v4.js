@@ -161,7 +161,9 @@ define(
                 kvpairs.push("shape" + "=" + geomObj);
                 kvpairs.push("buffer" + "=" + buffer.toString());
                 var queryString = kvpairs.join("&");
-                var ejscreenReportfile = "https://ejamapi-84652557241.us-central1.run.app/report";
+                // Centralized base from javascript/config.js (mobile/index.html loads it);
+                // the literal is only a fallback if that global is ever unset.
+                var ejscreenReportfile = (window.EJAM_API_BASE || "https://ejamapi-84652557241.us-central1.run.app") + "/report";
                 //console.log(cbasemap, e, frm.ptitle.value, ejreporturl)
                 //frm.submit();
                 window.open(ejscreenReportfile + "?" + queryString)
