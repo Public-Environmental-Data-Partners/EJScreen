@@ -15,6 +15,19 @@ The Report tool can accumulate **multiple** selected places (points, drawn areas
 
 The EJAM API and app endpoints are set in one place — `javascript/config.js` (`window.EJAM_API_BASE` / `window.EJAM_APP_URL`). For the deep-link URL vocabulary and parameter details, see the [EJAM-API](https://github.com/Public-Environmental-Data-Partners/EJAM-API) README and the EJAM package's "Defaults and Custom Settings for the Web App" article.
 
+## Deep links into EJScreen (URL parameters)
+
+The map app (`index.html`) can be launched with place(s) already selected for analysis, using the same parameter vocabulary the EJAM app and EJAM API use (these are the links EJAM's `url_ejscreenmap()` generates). One place opens the report popup on it; several places are drawn and also accumulated into the Multisite list, ready for a Multisite Report or Send to EJAM.
+
+| Parameter | Example | What it does |
+|---|---|---|
+| `fips=` | `index.html?fips=10001` or `?fips=10001,10003` | Draws and selects the boundary of each FIPS area: 5-digit county, 11-digit tract, or 12-digit block group (mixes allowed, comma-separated). |
+| `lat=` + `lon=` | `index.html?lat=39.1,39.7&lon=-75.5,-75.6&radius=3` | One or more points (comma-separated, equal lengths). Optional `radius=` is the buffer in miles used by reports (multisite default 3). |
+| `polygon=` | `index.html?polygon=39.1,-75.5;39.2,-75.4;39.0,-75.3` | A polygon given as semicolon-separated `lat,lon` vertices (at least 3). Repeat `polygon=` for more than one polygon. |
+| `wherestr=` | `index.html?wherestr=Trenton,NJ` or `?wherestr=39.1,-75.5` | Unchanged legacy behavior: geocodes a place name / address / zip (or centers on a `lat,lon`) and drops a pin. |
+
+Only one kind of place is used per link, in the order listed above (e.g., if `fips=` is present, `wherestr=` is ignored). State (2-digit) and city/CDP (7-digit) FIPS codes are not supported by the boundary-selection services, so links for those should use `wherestr=` with a place name instead.
+
 ## Other helpful resources on EJScreen:
 
 - First-time users may find the 5-minute [EJScreen in 5: A Quick Overview of EJScreen](https://web.archive.org/web/20241008150339/https://www.youtube.com/watch?v=HZp3AWDJt5A) video helpful as an introduction to the tool.
