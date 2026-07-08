@@ -24,6 +24,7 @@ require([
 	"esri/widgets/BasemapToggle",
 	"esri/geometry/Extent",
 	"esri/geometry/Point",
+	"esri/geometry/Polygon",
 	"esri/Graphic",
 	"esri/layers/FeatureLayer",
 	"esri/layers/GraphicsLayer",
@@ -94,6 +95,7 @@ require([
 	BasemapToggle,
 	Extent,
 	Point,
+	Polygon,
 	Graphic,
 	FeatureLayer,
 	GraphicsLayer,
@@ -147,6 +149,10 @@ require([
 		searchstr = searchstr.replace(/\+/g, " ");
 		searchstr = dojo.trim(searchstr);
 	}
+	// Deep-link parameters (?fips= / ?lat=&lon=[&radius=] / ?polygon=) that select
+	// place(s) for analysis, parsed up front and drawn once the view is ready.
+	// See parseDeepLinkParams() below for the URL vocabulary.
+	var deeplink = parseDeepLinkParams();
 	var idhandle = null;
 	var toolbarsHash = {};
 	var clon, clat;
@@ -248,7 +254,9 @@ var doSplashScreen = true;
 		}
 
 	esriConfig.request.proxyUrl = proxyurl;
-	if (searchstr.length > 0) {
+	if (deeplink) {
+		initMap(); // deep-linked places are drawn in view.when() via processDeepLink()
+	} else if (searchstr.length > 0) {
 		findloc(searchstr);
 	} else {
 		initMap();
@@ -280,7 +288,7 @@ var doSplashScreen = true;
 // const basemapRW = new Basemap({
   // baseLayers: [
     // new WebTileLayer({
-          // //urlTemplate: "https://api.mapbox.com/styles/v1/awphall22/cltsnegtn01aa01p5d0jre2nt/tiles/256/{level}/{col}/{row}@2x?access_token=pk.eyJ1IjoiYXdwaGFsbDIyIiwiYSI6ImNsajY3enYzOTA5YXgzam1oZmF5Yms2enAifQ.7ciWpv7qPVD0rludyaOoWQ",
+          // //urlTemplate: "https://api.mapbox.com/styles/v1/awphall22/cltsnegtn01aa01p5d0jre2nt/tiles/256/{level}/{col}/{row}@2x?access_token=MAPBOX_TOKEN_REDACTED", // token redacted from this dead test code (was committed in 2024; rotate it if it was ever live)
 		  // urlTemplate: "https://api.mapbox.com/styles/v1/awphall22/cltsnegtn01aa01p5d0jre2nt/tiles/256/{level}/{col}/{row}@2x",
           // //subDomains: ["a", "b", "c"] //RW 3/22 is this needed? What does it do? From ESRI sample
 		  // copyright: '&copy; <a href="https://www.openstreetmap.org/about/" target="_blank">OpenStreetMap</a> contributors Design &copy <a href="https://www.mapbox.com/about/maps" target="_blank">Mapbox</a>'
@@ -505,6 +513,7 @@ var doSplashScreen = true;
 				updatetoolbarview(breakpoint);
 			});
 			updatetoolbarview(view.widthBreakpoint);
+			if (deeplink) processDeepLink(deeplink);
 			if (displayLocation) {
 				var instr = unescape(searchstr);
 				instr = instr.replace(/\+/g, " ");
@@ -525,6 +534,425 @@ var doSplashScreen = true;
 			var pair = vars[i].split("=");
 			if (pair[0].toLowerCase() == variable.toLowerCase()) {
 				return pair[1];
+			}
+		}
+	}
+
+	// like getQueryVariable() but returns ALL values of a repeatable parameter,
+	// splitting each pair only on the FIRST "=" so values containing "=" survive
+	function getQueryVariableAll(variable) {
+		var query = window.location.search.substring(1);
+		var vars = query.split("&");
+		var values = [];
+		for (var i = 0; i < vars.length; i++) {
+			var eq = vars[i].indexOf("=");
+			if (eq < 0) continue;
+			var key = vars[i].substring(0, eq);
+			var value = vars[i].substring(eq + 1);
+			if (key.toLowerCase() == variable.toLowerCase() && value.length > 0) {
+				values.push(value);
+			}
+		}
+		return values;
+	}
+
+	// decodeURIComponent that survives malformed percent-escapes in hand-built
+	// URLs (an uncaught URIError here would abort the whole app startup)
+	function safeDecode(value) {
+		try {
+			return decodeURIComponent(value);
+		} catch (e) {
+			console.warn("Deep link: could not decode a parameter value, using it as is: " + value);
+			return value;
+		}
+	}
+
+	// ------------------------------------------------------------------- -
+	// Deep links: select place(s) for analysis straight from the launch URL.
+	//
+	//   ?fips=10001              draw & select a county (5 digits), tract (11), or
+	//   ?fips=10001,10003        block group (12); mixes allowed, comma-separated
+	//   ?lat=39.1,39.7&lon=-75.5,-75.6&radius=3
+	//                            one or more points, optional buffer radius in miles
+	//   ?polygon=39.1,-75.5;39.2,-75.4;39.0,-75.3
+	//                            polygon vertices as lat,lon pairs; repeat polygon=
+	//                            for more than one polygon. shape=, shp=, and
+	//                            shapefile= are aliases (synonyms) for polygon=,
+	//                            matching the aliases EJAM functions accept
+	//   ?wherestr=...            geocode a name/address/zip, or center on
+	//                            "lat,lon", and drop a pin -- EXCEPT that a bare
+	//                            5-digit value is ambiguous (ZIP vs county FIPS):
+	//                            deep links follow EJAM's convention and try it
+	//                            as a county FIPS first (drawing the boundary),
+	//                            falling back to the old geocode/ZIP behavior if
+	//                            no county has that code. Use fips= for FIPS
+	//                            codes, and add context (e.g. wherestr=10001,NY)
+	//                            to force a ZIP. The interactive search box is
+	//                            unchanged (it still reads 5 digits as a ZIP).
+	//
+	// Only one kind of place is used per link, in the order above; wherestr keeps
+	// its old behavior (other than the 5-digit case above) when none of the newer
+	// parameters are present. A single place opens the report popup on it;
+	// several places are also added to the
+	// Multisite list (multisite.js) ready for a Multisite Report / Send to EJAM.
+	// These parameters mirror the ones the EJAM app and EJAM API accept, and are
+	// what EJAM's url_ejscreenmap() generates.
+	// ------------------------------------------------------------------- -
+
+	var FIPSTYPE_BY_LENGTH = { 5: "county", 11: "tract", 12: "blockgroup" };
+
+	function parseDeepLinkParams() {
+		var radius = parseFloat(getQueryVariable("radius"));
+		if (!(radius > 0)) radius = 0;
+
+		var fipsraw = getQueryVariable("fips");
+		if (fipsraw) {
+			var codes = [];
+			var pieces = safeDecode(fipsraw).split(",");
+			for (var i = 0; i < pieces.length; i++) {
+				var code = dojo.trim(pieces[i]);
+				if (code.length > 0) codes.push(code);
+			}
+			if (codes.length > 0) return { mode: "fips", fips: codes, radius: radius };
+		}
+
+		var latraw = getQueryVariable("lat");
+		var lonraw = getQueryVariable("lon");
+		if (latraw && lonraw) {
+			var lats = safeDecode(latraw).split(",");
+			var lons = safeDecode(lonraw).split(",");
+			var n = Math.min(lats.length, lons.length);
+			if (lats.length != lons.length) {
+				console.warn("Deep link: lat= and lon= have different lengths; using the first " + n + " pair(s).");
+			}
+			var points = [];
+			for (var j = 0; j < n; j++) {
+				var plat = parseFloat(lats[j]);
+				var plon = parseFloat(lons[j]);
+				if (isFinite(plat) && isFinite(plon)) points.push({ lat: plat, lon: plon });
+			}
+			if (points.length > 0) return { mode: "points", points: points, radius: radius };
+		}
+
+		// shape/shp/shapefile are aliases (synonyms) for polygon, as in EJAM's functions
+		var polyaliases = ["polygon", "shape", "shp", "shapefile"];
+		var polyraw = [];
+		for (var p = 0; p < polyaliases.length; p++) {
+			polyraw = polyraw.concat(getQueryVariableAll(polyaliases[p]));
+		}
+		if (polyraw.length > 0) {
+			var rings = [];
+			for (var k = 0; k < polyraw.length; k++) {
+				var ring = [];
+				var pairs = safeDecode(polyraw[k]).split(";");
+				for (var m = 0; m < pairs.length; m++) {
+					var xy = pairs[m].split(",");
+					var vlat = parseFloat(xy[0]);
+					var vlon = parseFloat(xy[1]);
+					if (isFinite(vlat) && isFinite(vlon)) ring.push([vlon, vlat]); // rings are lon,lat
+				}
+				if (ring.length >= 3) {
+					// close the ring if needed
+					var first = ring[0];
+					var last = ring[ring.length - 1];
+					if (first[0] !== last[0] || first[1] !== last[1]) ring.push([first[0], first[1]]);
+					rings.push(ring);
+				} else {
+					console.warn("Deep link: polygon= needs at least 3 valid lat,lon pairs; skipped one.");
+				}
+			}
+			if (rings.length > 0) return { mode: "polygons", rings: rings, radius: radius };
+		}
+
+		// ZIP vs county FIPS: a bare 5-digit wherestr is ambiguous. Try it as a
+		// county FIPS first (EJAM's convention); deepLinkFips() falls back to the
+		// legacy geocode (ZIP) behavior if no county has that code.
+		var wraw = getQueryVariable("wherestr");
+		if (wraw) {
+			var wtrim = dojo.trim(safeDecode(wraw).replace(/\+/g, " "));
+			if (/^\d{5}$/.test(wtrim)) {
+				return { mode: "fips", fips: [wtrim], radius: radius, zipfallback: wtrim };
+			}
+		}
+		return null;
+	}
+
+	function processDeepLink(dl) {
+		if (dl.mode == "fips") deepLinkFips(dl);
+		else if (dl.mode == "points") deepLinkPoints(dl);
+		else if (dl.mode == "polygons") deepLinkPolygons(dl);
+	}
+
+	// Wrap one deep-linked graphic in its own selectable layer, with the same
+	// report popup the Report tool's selections get (submitFIPs/addLocation style).
+	function addDeepLinkLayer(geometry, attributes, symbol, title) {
+		var gcounter = 0;
+		var layerid;
+		do {
+			gcounter = gcounter + 1;
+			layerid = "Project" + gcounter;
+		} while (view.map.findLayerById(layerid) != null);
+		attributes.id = gcounter;
+		var graphic = new Graphic({ geometry: geometry, attributes: attributes });
+		var fields = [{ name: "id", type: "oid" }];
+		for (var att in attributes) {
+			if (att != "id") {
+				fields.push({ name: att, type: typeof attributes[att] == "number" ? "double" : "string" });
+			}
+		}
+		var dlayer = new FeatureLayer({
+			id: layerid,
+			source: [graphic],
+			title: title || "Project " + gcounter,
+			objectIdField: "id",
+			outFields: ["*"],
+			fields: fields,
+			popupTemplate: {
+				title: "EJScreen Reports and Charts",
+				content: SetDesc,
+			},
+			renderer: {
+				type: "simple",
+				symbol: symbol,
+			},
+		});
+		dlayer.layerType = "digitize";
+		view.map.add(dlayer);
+		drawlayerobj[layerid] = [graphic];
+		return graphic;
+	}
+
+	function deepLinkFips(dl) {
+		// group the codes by geography type, inferred from code length
+		var groups = {};
+		var badcodes = [];
+		for (var i = 0; i < dl.fips.length; i++) {
+			var code = dl.fips[i];
+			var gtype = FIPSTYPE_BY_LENGTH[code.length];
+			if (gtype && /^\d+$/.test(code)) {
+				if (!groups[gtype]) groups[gtype] = [];
+				if (groups[gtype].indexOf(code) == -1) groups[gtype].push(code);
+			} else {
+				badcodes.push(code);
+			}
+		}
+		var gtypes = [];
+		for (var g in groups) gtypes.push(g);
+		if (gtypes.length == 0) {
+			alert(
+				"This link's FIPS code(s) are not usable: " + badcodes.join(", ") +
+				"\nUse 5-digit county, 11-digit tract, or 12-digit block group codes."
+			);
+			return;
+		}
+		if (badcodes.length > 0) {
+			console.warn("Deep link: skipped unsupported FIPS code(s): " + badcodes.join(", "));
+		}
+
+		var promises = [];
+		for (var t = 0; t < gtypes.length; t++) {
+			promises.push(queryFipsGeometries(gtypes[t], groups[gtypes[t]]));
+		}
+		Promise.all(promises).then(
+			function (resultsets) {
+				var selected = [];
+				var fullextent = null;
+				var foundcodes = {};
+				for (var r = 0; r < resultsets.length; r++) {
+					var rs = resultsets[r];
+					for (var f = 0; f < rs.features.length; f++) {
+						var feature = rs.features[f];
+						var fipsvalue = String(feature.attributes[rs.idfield]);
+						var namevalue = String(feature.attributes[rs.namefield]);
+						foundcodes[fipsvalue] = true;
+						var title =
+							namevalue == fipsvalue
+								? typelookup[rs.gtype].description + " " + fipsvalue
+								: namevalue;
+						var graphic = addDeepLinkLayer(
+							feature.geometry,
+							{ gtype: rs.gtype, fips: fipsvalue, names: namevalue },
+							polysym,
+							title
+						);
+						selected.push({ graphic: graphic, fips: fipsvalue, name: title });
+						fullextent =
+							fullextent == null
+								? feature.geometry.extent.clone()
+								: fullextent.union(feature.geometry.extent);
+					}
+				}
+				var missing = [];
+				for (var g2 in groups) {
+					for (var c = 0; c < groups[g2].length; c++) {
+						if (!foundcodes[groups[g2][c]]) missing.push(groups[g2][c]);
+					}
+				}
+				if (missing.length > 0) {
+					console.warn("Deep link: no boundary found for FIPS: " + missing.join(", "));
+				}
+				if (selected.length == 0) {
+					if (dl.zipfallback) {
+						// bare 5-digit wherestr that is not a county FIPS: treat it the
+						// legacy way after all (geocoders read 5 digits as a ZIP code)
+						deepLinkGeocodeFallback(dl.zipfallback);
+						return;
+					}
+					alert("No boundaries were found for the FIPS code(s) in this link: " + missing.join(", "));
+					return;
+				}
+				// jump (not animate): a deep link should open already at the place,
+				// and rAF-driven animation can stall in background tabs
+				view.goTo(fullextent.clone().expand(1.3), { animate: false }).catch(function () {});
+				if (selected.length == 1) {
+					view.popup.open({
+						features: [selected[0].graphic],
+						location: selected[0].graphic.geometry.centroid,
+					});
+				} else if (window.EJmultisite) {
+					for (var s = 0; s < selected.length; s++) {
+						window.EJmultisite.add({
+							type: "fips",
+							label: selected[s].name || selected[s].fips,
+							fips: selected[s].fips,
+						});
+					}
+				}
+			},
+			function (err) {
+				console.log("Deep link: FIPS boundary query failed: " + err);
+				if (dl.zipfallback) {
+					deepLinkGeocodeFallback(dl.zipfallback);
+					return;
+				}
+				alert("Could not load the boundaries for the FIPS code(s) in this link.");
+			}
+		);
+	}
+
+	// legacy behavior for a deep-linked wherestr once the view already exists:
+	// geocode the text (a bare 5-digit value reads as a ZIP), center, drop a pin
+	function deepLinkGeocodeFallback(searchtext) {
+		var geourl = geocoderurl + "/find?text=" + searchtext + "&maxLocations=10&outSR=4326&f=json";
+		esriRequest(geourl, { responseType: "json" })
+			.then(function (response) {
+				var result = response.data;
+				if (result.locations.length > 0) {
+					var glat = result.locations[0].feature.geometry.y;
+					var glon = result.locations[0].feature.geometry.x;
+					view.center = [glon, glat];
+					view.zoom = 12;
+					addLocation(
+						new Point({ x: glon, y: glat, spatialReference: { wkid: 4326 } }),
+						searchtext
+					);
+				} else {
+					alert("Did not find matched location for '" + searchtext + "'");
+				}
+			})
+			.catch(function (err) {
+				console.log("Deep link: geocode fallback failed: " + err);
+			});
+	}
+
+	function queryFipsGeometries(gtype, codes) {
+		var tl = typelookup[gtype];
+		var quoted = "";
+		for (var i = 0; i < codes.length; i++) {
+			if (i > 0) quoted = quoted + ",";
+			quoted = quoted + "'" + codes[i] + "'";
+		}
+		var query = new Query();
+		query.returnGeometry = true;
+		query.outFields = tl.idfield == tl.namefield ? [tl.idfield] : [tl.idfield, tl.namefield];
+		query.where = tl.idfield + " in (" + quoted + ")";
+		query.outSpatialReference = view.spatialReference;
+		query.geometryPrecision = 1;
+		var queryTask = new QueryTask({ url: tl.url + "/" + tl.layer });
+		return queryTask.execute(query).then(function (results) {
+			return { gtype: gtype, features: results.features, idfield: tl.idfield, namefield: tl.namefield };
+		});
+	}
+
+	function deepLinkPoints(dl) {
+		var selected = [];
+		for (var i = 0; i < dl.points.length; i++) {
+			var pt = dl.points[i];
+			var geom = new Point({ x: pt.lon, y: pt.lat, spatialReference: { wkid: 4326 } });
+			var label = dl.points.length > 1 ? "Site " + (i + 1) : "Site";
+			var desc = label + ", Coordinates: " + pt.lat.toFixed(6) + ", " + pt.lon.toFixed(6);
+			var attributes = { gtype: "point", descinfo: desc, unit: "miles" };
+			if (dl.radius > 0) attributes.radius = dl.radius;
+			var graphic = addDeepLinkLayer(geom, attributes, pointsym, label + " (point)");
+			selected.push({ graphic: graphic, point: pt, label: label });
+		}
+		if (selected.length == 1) {
+			view.center = [selected[0].point.lon, selected[0].point.lat];
+			view.zoom = 12;
+			view.popup.open({
+				features: [selected[0].graphic],
+				location: selected[0].graphic.geometry,
+			});
+		} else {
+			var xmin = Infinity, ymin = Infinity, xmax = -Infinity, ymax = -Infinity;
+			for (var p = 0; p < selected.length; p++) {
+				xmin = Math.min(xmin, selected[p].point.lon);
+				xmax = Math.max(xmax, selected[p].point.lon);
+				ymin = Math.min(ymin, selected[p].point.lat);
+				ymax = Math.max(ymax, selected[p].point.lat);
+			}
+			// keep a sensible zoom when the points are very close together
+			if (xmax - xmin < 0.02) { xmin -= 0.01; xmax += 0.01; }
+			if (ymax - ymin < 0.02) { ymin -= 0.01; ymax += 0.01; }
+			view.goTo(
+				new Extent({ xmin: xmin, ymin: ymin, xmax: xmax, ymax: ymax, spatialReference: { wkid: 4326 } }).expand(1.3),
+				{ animate: false }
+			).catch(function () {});
+			if (window.EJmultisite) {
+				for (var s = 0; s < selected.length; s++) {
+					window.EJmultisite.add({
+						type: "point",
+						label: selected[s].label,
+						lon: selected[s].point.lon,
+						lat: selected[s].point.lat,
+						radius: dl.radius > 0 ? dl.radius : 3,
+					});
+				}
+			}
+		}
+	}
+
+	function deepLinkPolygons(dl) {
+		var selected = [];
+		var fullextent = null;
+		for (var i = 0; i < dl.rings.length; i++) {
+			var ring = dl.rings[i];
+			var geom = new Polygon({ rings: [ring], spatialReference: { wkid: 4326 } });
+			var label = dl.rings.length > 1 ? "Polygon " + (i + 1) : "Polygon";
+			var attributes = { gtype: "polygon", descinfo: label + " from link", unit: "miles" };
+			if (dl.radius > 0) attributes.radius = dl.radius;
+			var graphic = addDeepLinkLayer(geom, attributes, polysym, label + " (from link)");
+			selected.push({ graphic: graphic, ring: ring, label: label });
+			fullextent = fullextent == null ? geom.extent.clone() : fullextent.union(geom.extent);
+		}
+		view.goTo(fullextent.clone().expand(1.3), { animate: false }).catch(function () {});
+		if (selected.length == 1) {
+			view.popup.open({
+				features: [selected[0].graphic],
+				location: selected[0].graphic.geometry.centroid,
+			});
+		} else if (window.EJmultisite) {
+			for (var s = 0; s < selected.length; s++) {
+				window.EJmultisite.add({
+					type: "polygon",
+					label: selected[s].label,
+					feature: {
+						type: "Feature",
+						properties: {},
+						geometry: { type: "Polygon", coordinates: [selected[s].ring] },
+					},
+					radius: dl.radius,
+				});
 			}
 		}
 	}
