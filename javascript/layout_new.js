@@ -579,6 +579,9 @@ var doSplashScreen = true;
 	//                            for more than one polygon. shape=, shp=, and
 	//                            shapefile= are aliases (synonyms) for polygon=,
 	//                            matching the aliases EJAM functions accept
+	//   ?zip=10001               the EXPLICIT way to pass ZIP code(s), comma-
+	//                            separated: each is geocoded as a ZIP and gets a
+	//                            pin (never read as a county FIPS)
 	//   ?wherestr=...            geocode a name/address/zip, or center on
 	//                            "lat,lon", and drop a pin -- EXCEPT that a bare
 	//                            5-digit value is ambiguous (ZIP vs county FIPS):
@@ -664,6 +667,23 @@ var doSplashScreen = true;
 			if (rings.length > 0) return { mode: "polygons", rings: rings, radius: radius };
 		}
 
+		// ?zip= is the explicit way to pass ZIP code(s): always geocoded as ZIPs,
+		// never read as county FIPS (unlike a bare 5-digit wherestr, below)
+		var zipraw = getQueryVariable("zip");
+		if (zipraw) {
+			var zips = [];
+			var zpieces = safeDecode(zipraw).split(",");
+			for (var z = 0; z < zpieces.length; z++) {
+				var zc = dojo.trim(zpieces[z]);
+				if (/^\d{5}$/.test(zc)) {
+					if (zips.indexOf(zc) == -1) zips.push(zc);
+				} else if (zc.length > 0) {
+					console.warn("Deep link: zip= values must be 5 digits; skipped: " + zc);
+				}
+			}
+			if (zips.length > 0) return { mode: "zip", zips: zips, radius: radius };
+		}
+
 		// ZIP vs county FIPS: a bare 5-digit wherestr is ambiguous. Try it as a
 		// county FIPS first (EJAM's convention); deepLinkFips() falls back to the
 		// legacy geocode (ZIP) behavior if no county has that code.
@@ -681,6 +701,7 @@ var doSplashScreen = true;
 		if (dl.mode == "fips") deepLinkFips(dl);
 		else if (dl.mode == "points") deepLinkPoints(dl);
 		else if (dl.mode == "polygons") deepLinkPolygons(dl);
+		else if (dl.mode == "zip") deepLinkZips(dl);
 	}
 
 	// Wrap one deep-linked graphic in its own selectable layer, with the same
@@ -853,6 +874,72 @@ var doSplashScreen = true;
 			.catch(function (err) {
 				console.log("Deep link: geocode fallback failed: " + err);
 			});
+	}
+
+	// ?zip= deep link: geocode each ZIP code and pin it (with the report popup);
+	// one ZIP centers the map on it, several fit the view to all of them
+	function deepLinkZips(dl) {
+		var found = [];
+		var pending = dl.zips.length;
+		function oneDone() {
+			pending = pending - 1;
+			if (pending > 0) return;
+			if (found.length == 0) {
+				alert("Did not find matched location for ZIP code(s): " + dl.zips.join(", "));
+				return;
+			}
+			var graphics = [];
+			for (var f = 0; f < found.length; f++) {
+				var geom = new Point({ x: found[f].lon, y: found[f].lat, spatialReference: { wkid: 4326 } });
+				var desc = "ZIP " + found[f].zip + ", Coordinates: " + found[f].lat.toFixed(6) + ", " + found[f].lon.toFixed(6);
+				var attributes = { gtype: "point", descinfo: desc, unit: "miles" };
+				if (dl.radius > 0) attributes.radius = dl.radius;
+				graphics.push(addDeepLinkLayer(geom, attributes, pointsym, "ZIP " + found[f].zip + " (point)"));
+			}
+			if (found.length == 1) {
+				view.center = [found[0].lon, found[0].lat];
+				view.zoom = 12;
+				view.popup.open({ features: [graphics[0]], location: graphics[0].geometry });
+			} else {
+				var xmin = Infinity, ymin = Infinity, xmax = -Infinity, ymax = -Infinity;
+				for (var p = 0; p < found.length; p++) {
+					xmin = Math.min(xmin, found[p].lon);
+					xmax = Math.max(xmax, found[p].lon);
+					ymin = Math.min(ymin, found[p].lat);
+					ymax = Math.max(ymax, found[p].lat);
+				}
+				// keep a sensible zoom when the ZIPs are very close together
+				if (xmax - xmin < 0.02) { xmin -= 0.01; xmax += 0.01; }
+				if (ymax - ymin < 0.02) { ymin -= 0.01; ymax += 0.01; }
+				view.goTo(
+					new Extent({ xmin: xmin, ymin: ymin, xmax: xmax, ymax: ymax, spatialReference: { wkid: 4326 } }).expand(1.3),
+					{ animate: false }
+				).catch(function () {});
+			}
+		}
+		for (var i = 0; i < dl.zips.length; i++) {
+			(function (zipcode) {
+				var geourl = geocoderurl + "/find?text=" + zipcode + "&maxLocations=10&outSR=4326&f=json";
+				esriRequest(geourl, { responseType: "json" })
+					.then(function (response) {
+						var result = response.data;
+						if (result.locations.length > 0) {
+							found.push({
+								zip: zipcode,
+								lat: result.locations[0].feature.geometry.y,
+								lon: result.locations[0].feature.geometry.x,
+							});
+						} else {
+							console.warn("Deep link: no location found for ZIP " + zipcode);
+						}
+						oneDone();
+					})
+					.catch(function (err) {
+						console.log("Deep link: ZIP geocode failed for " + zipcode + ": " + err);
+						oneDone();
+					});
+			})(dl.zips[i]);
+		}
 	}
 
 	function queryFipsGeometries(gtype, codes) {
