@@ -23,7 +23,7 @@ The map app (`index.html`) can be launched with place(s) already selected for an
 |---|---|---|
 | `fips=` | `index.html?fips=10001` or `?fips=10001,10003` | Draws and selects the boundary of each FIPS area: 5-digit county, 11-digit tract, or 12-digit block group (mixes allowed, comma-separated). |
 | `lat=` + `lon=` | `index.html?lat=39.1,39.7&lon=-75.5,-75.6&radius=3` | One or more points (comma-separated, equal lengths). Optional `radius=` is the buffer in miles used by reports (multisite default 3). |
-| `polygon=` | `index.html?polygon=39.1,-75.5;39.2,-75.4;39.0,-75.3` | A polygon given as semicolon-separated `lat,lon` vertices (at least 3). Repeat `polygon=` for more than one polygon. |
+| `polygon=` | `index.html?polygon=39.1,-75.5;39.2,-75.4;39.0,-75.3` | A polygon given as semicolon-separated `lat,lon` vertices (at least 3). Repeat `polygon=` for more than one polygon. `shape=`, `shp=`, and `shapefile=` are aliases (synonyms) for `polygon=`, matching the parameter aliases EJAM functions like `ejamit()` accept. |
 | `wherestr=` | `index.html?wherestr=Trenton,NJ` or `?wherestr=39.1,-75.5` | Unchanged legacy behavior: geocodes a place name / address / zip (or centers on a `lat,lon`) and drops a pin. |
 
 Only one kind of place is used per link, in the order listed above (e.g., if `fips=` is present, `wherestr=` is ignored). State (2-digit) and city/CDP (7-digit) FIPS codes are not supported by the boundary-selection services, so links for those should use `wherestr=` with a place name instead.

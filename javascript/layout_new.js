@@ -561,7 +561,9 @@ var doSplashScreen = true;
 	//                            one or more points, optional buffer radius in miles
 	//   ?polygon=39.1,-75.5;39.2,-75.4;39.0,-75.3
 	//                            polygon vertices as lat,lon pairs; repeat polygon=
-	//                            for more than one polygon
+	//                            for more than one polygon. shape=, shp=, and
+	//                            shapefile= are aliases (synonyms) for polygon=,
+	//                            matching the aliases EJAM functions accept
 	//   ?wherestr=...            (unchanged) geocode a name/address/zip, or center
 	//                            on "lat,lon", and drop a pin
 	//
@@ -608,7 +610,12 @@ var doSplashScreen = true;
 			if (points.length > 0) return { mode: "points", points: points, radius: radius };
 		}
 
-		var polyraw = getQueryVariableAll("polygon");
+		// shape/shp/shapefile are aliases (synonyms) for polygon, as in EJAM's functions
+		var polyaliases = ["polygon", "shape", "shp", "shapefile"];
+		var polyraw = [];
+		for (var p = 0; p < polyaliases.length; p++) {
+			polyraw = polyraw.concat(getQueryVariableAll(polyaliases[p]));
+		}
 		if (polyraw.length > 0) {
 			var rings = [];
 			for (var k = 0; k < polyraw.length; k++) {
