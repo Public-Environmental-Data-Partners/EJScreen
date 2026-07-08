@@ -538,18 +538,33 @@ var doSplashScreen = true;
 		}
 	}
 
-	// like getQueryVariable() but returns ALL values of a repeatable parameter
+	// like getQueryVariable() but returns ALL values of a repeatable parameter,
+	// splitting each pair only on the FIRST "=" so values containing "=" survive
 	function getQueryVariableAll(variable) {
 		var query = window.location.search.substring(1);
 		var vars = query.split("&");
 		var values = [];
 		for (var i = 0; i < vars.length; i++) {
-			var pair = vars[i].split("=");
-			if (pair[0].toLowerCase() == variable.toLowerCase() && pair.length > 1 && pair[1].length > 0) {
-				values.push(pair[1]);
+			var eq = vars[i].indexOf("=");
+			if (eq < 0) continue;
+			var key = vars[i].substring(0, eq);
+			var value = vars[i].substring(eq + 1);
+			if (key.toLowerCase() == variable.toLowerCase() && value.length > 0) {
+				values.push(value);
 			}
 		}
 		return values;
+	}
+
+	// decodeURIComponent that survives malformed percent-escapes in hand-built
+	// URLs (an uncaught URIError here would abort the whole app startup)
+	function safeDecode(value) {
+		try {
+			return decodeURIComponent(value);
+		} catch (e) {
+			console.warn("Deep link: could not decode a parameter value, using it as is: " + value);
+			return value;
+		}
 	}
 
 	// ------------------------------------------------------------------- -
@@ -564,12 +579,21 @@ var doSplashScreen = true;
 	//                            for more than one polygon. shape=, shp=, and
 	//                            shapefile= are aliases (synonyms) for polygon=,
 	//                            matching the aliases EJAM functions accept
-	//   ?wherestr=...            (unchanged) geocode a name/address/zip, or center
-	//                            on "lat,lon", and drop a pin
+	//   ?wherestr=...            geocode a name/address/zip, or center on
+	//                            "lat,lon", and drop a pin -- EXCEPT that a bare
+	//                            5-digit value is ambiguous (ZIP vs county FIPS):
+	//                            deep links follow EJAM's convention and try it
+	//                            as a county FIPS first (drawing the boundary),
+	//                            falling back to the old geocode/ZIP behavior if
+	//                            no county has that code. Use fips= for FIPS
+	//                            codes, and add context (e.g. wherestr=10001,NY)
+	//                            to force a ZIP. The interactive search box is
+	//                            unchanged (it still reads 5 digits as a ZIP).
 	//
 	// Only one kind of place is used per link, in the order above; wherestr keeps
-	// its old behavior when none of the newer parameters are present. A single
-	// place opens the report popup on it; several places are also added to the
+	// its old behavior (other than the 5-digit case above) when none of the newer
+	// parameters are present. A single place opens the report popup on it;
+	// several places are also added to the
 	// Multisite list (multisite.js) ready for a Multisite Report / Send to EJAM.
 	// These parameters mirror the ones the EJAM app and EJAM API accept, and are
 	// what EJAM's url_ejscreenmap() generates.
@@ -584,7 +608,7 @@ var doSplashScreen = true;
 		var fipsraw = getQueryVariable("fips");
 		if (fipsraw) {
 			var codes = [];
-			var pieces = decodeURIComponent(fipsraw).split(",");
+			var pieces = safeDecode(fipsraw).split(",");
 			for (var i = 0; i < pieces.length; i++) {
 				var code = dojo.trim(pieces[i]);
 				if (code.length > 0) codes.push(code);
@@ -595,8 +619,8 @@ var doSplashScreen = true;
 		var latraw = getQueryVariable("lat");
 		var lonraw = getQueryVariable("lon");
 		if (latraw && lonraw) {
-			var lats = decodeURIComponent(latraw).split(",");
-			var lons = decodeURIComponent(lonraw).split(",");
+			var lats = safeDecode(latraw).split(",");
+			var lons = safeDecode(lonraw).split(",");
 			var n = Math.min(lats.length, lons.length);
 			if (lats.length != lons.length) {
 				console.warn("Deep link: lat= and lon= have different lengths; using the first " + n + " pair(s).");
@@ -620,7 +644,7 @@ var doSplashScreen = true;
 			var rings = [];
 			for (var k = 0; k < polyraw.length; k++) {
 				var ring = [];
-				var pairs = decodeURIComponent(polyraw[k]).split(";");
+				var pairs = safeDecode(polyraw[k]).split(";");
 				for (var m = 0; m < pairs.length; m++) {
 					var xy = pairs[m].split(",");
 					var vlat = parseFloat(xy[0]);
@@ -638,6 +662,17 @@ var doSplashScreen = true;
 				}
 			}
 			if (rings.length > 0) return { mode: "polygons", rings: rings, radius: radius };
+		}
+
+		// ZIP vs county FIPS: a bare 5-digit wherestr is ambiguous. Try it as a
+		// county FIPS first (EJAM's convention); deepLinkFips() falls back to the
+		// legacy geocode (ZIP) behavior if no county has that code.
+		var wraw = getQueryVariable("wherestr");
+		if (wraw) {
+			var wtrim = dojo.trim(safeDecode(wraw).replace(/\+/g, " "));
+			if (/^\d{5}$/.test(wtrim)) {
+				return { mode: "fips", fips: [wtrim], radius: radius, zipfallback: wtrim };
+			}
 		}
 		return null;
 	}
@@ -757,6 +792,12 @@ var doSplashScreen = true;
 					console.warn("Deep link: no boundary found for FIPS: " + missing.join(", "));
 				}
 				if (selected.length == 0) {
+					if (dl.zipfallback) {
+						// bare 5-digit wherestr that is not a county FIPS: treat it the
+						// legacy way after all (geocoders read 5 digits as a ZIP code)
+						deepLinkGeocodeFallback(dl.zipfallback);
+						return;
+					}
 					alert("No boundaries were found for the FIPS code(s) in this link: " + missing.join(", "));
 					return;
 				}
@@ -780,9 +821,38 @@ var doSplashScreen = true;
 			},
 			function (err) {
 				console.log("Deep link: FIPS boundary query failed: " + err);
+				if (dl.zipfallback) {
+					deepLinkGeocodeFallback(dl.zipfallback);
+					return;
+				}
 				alert("Could not load the boundaries for the FIPS code(s) in this link.");
 			}
 		);
+	}
+
+	// legacy behavior for a deep-linked wherestr once the view already exists:
+	// geocode the text (a bare 5-digit value reads as a ZIP), center, drop a pin
+	function deepLinkGeocodeFallback(searchtext) {
+		var geourl = geocoderurl + "/find?text=" + searchtext + "&maxLocations=10&outSR=4326&f=json";
+		esriRequest(geourl, { responseType: "json" })
+			.then(function (response) {
+				var result = response.data;
+				if (result.locations.length > 0) {
+					var glat = result.locations[0].feature.geometry.y;
+					var glon = result.locations[0].feature.geometry.x;
+					view.center = [glon, glat];
+					view.zoom = 12;
+					addLocation(
+						new Point({ x: glon, y: glat, spatialReference: { wkid: 4326 } }),
+						searchtext
+					);
+				} else {
+					alert("Did not find matched location for '" + searchtext + "'");
+				}
+			})
+			.catch(function (err) {
+				console.log("Deep link: geocode fallback failed: " + err);
+			});
 	}
 
 	function queryFipsGeometries(gtype, codes) {
