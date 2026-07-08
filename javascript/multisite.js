@@ -116,7 +116,7 @@
             query = "?lat=" + lats + "&lon=" + lons + "&buffer=" + buffer + "&sitenumber=0&fileextension=html";
         } else { // fips — each code is a separate site
             var fipsAll = items.map(function (d) { return d.fips; }).join(",");
-            query = "?fips=" + encodeURIComponent(fipsAll) + "&sitenumber=0&fileextension=html";
+            query = "?fips=" + encodeURIComponent(fipsAll) + "&sitenumber=0&buffer=0&fileextension=html";
         }
         openExternal(REPORT_URL + query);
     }
