@@ -915,22 +915,47 @@ var doSplashScreen = true;
 					new Extent({ xmin: xmin, ymin: ymin, xmax: xmax, ymax: ymax, spatialReference: { wkid: 4326 } }).expand(1.3),
 					{ animate: false }
 				).catch(function () {});
+				// several ZIPs: add each to the Multisite list (as points, like the
+				// other multi-place deep links) so the Multisite Report / Send to
+				// EJAM panel appears
+				if (window.EJmultisite) {
+					for (var s = 0; s < found.length; s++) {
+						window.EJmultisite.add({
+							type: "point",
+							label: "ZIP " + found[s].zip,
+							lon: found[s].lon,
+							lat: found[s].lat,
+							radius: dl.radius > 0 ? dl.radius : 3,
+						});
+					}
+				}
 			}
 		}
 		for (var i = 0; i < dl.zips.length; i++) {
 			(function (zipcode) {
-				var geourl = geocoderurl + "/find?text=" + zipcode + "&maxLocations=10&outSR=4326&f=json";
+				// constrain to US postal (ZIP) candidates so an invalid US ZIP does
+				// not resolve to a same-digit place abroad (e.g. 10000 -> France)
+				var geourl = geocoderurl + "/find?text=" + zipcode +
+					"&sourceCountry=USA&category=Postal&maxLocations=10&outSR=4326&f=json";
 				esriRequest(geourl, { responseType: "json" })
 					.then(function (response) {
 						var result = response.data;
-						if (result.locations.length > 0) {
+						// belt-and-suspenders: accept only a Postal-type match
+						var loc = null;
+						var locs = (result && result.locations) ? result.locations : [];
+						for (var k = 0; k < locs.length; k++) {
+							var attrs = locs[k].feature ? locs[k].feature.attributes : null;
+							var atype = attrs ? attrs.Addr_Type : "";
+							if (typeof atype === "string" && atype.indexOf("Postal") === 0) { loc = locs[k]; break; }
+						}
+						if (loc) {
 							found.push({
 								zip: zipcode,
-								lat: result.locations[0].feature.geometry.y,
-								lon: result.locations[0].feature.geometry.x,
+								lat: loc.feature.geometry.y,
+								lon: loc.feature.geometry.x,
 							});
 						} else {
-							console.warn("Deep link: no location found for ZIP " + zipcode);
+							console.warn("Deep link: no US ZIP code match for " + zipcode);
 						}
 						oneDone();
 					})
