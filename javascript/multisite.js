@@ -162,7 +162,18 @@
         var type = items[0].type;
         var payload = {};
         var r = maxRadius();
-        if (r) { payload.radius = r; }
+        // Points always carry a positive buffer (enforced when adding to the
+        // basket), so send it when present. FIPS and drawn polygons are already
+        // areas whose natural default is no buffer: ALWAYS send an explicit
+        // radius (0 when the user added none) rather than omitting the field,
+        // so the EJAM API/app never has to infer it -- an absent radius came
+        // back from the API as JSON {} and crashed the EJAM app's launch
+        // handler (Public-Environmental-Data-Partners/EJAM#465).
+        if (type === "fips" || type === "polygon") {
+            payload.radius = r;
+        } else if (r) {
+            payload.radius = r;
+        }
         if (type === "point") {
             payload.method = "latlon";
             payload.sites = items.map(function (d) { return { lat: d.lat, lon: d.lon }; });
