@@ -1,4 +1,4 @@
-﻿var versionHover = '<div class="info-container"><div class="info-logo">?</div><div class="info-tooltip">The last official version of EJSCREEN before it was removed from public access in early February 2025 was v2.32. This is v3.2022.1 to acknowledge the completion of several then-in-the-works features and the use of 2017-2022 American Community Survey data (as was the case in v2.32).</div></div>'
+﻿var versionHover = '<div class="info-container"><div class="info-logo">?</div><div class="info-tooltip">The last official version of EJSCREEN before it was removed from public access in early February 2025 was v2.32. This is v3.2022.2 to acknowledge the completion of several then-in-the-works features and the use of 2018-2022 American Community Survey data (as was the case in v2.32).</div></div>'
 var defaults = {
   //The ID for the map from ArcGIS.com
   //webmap: "f5b13dbed07c46cdb783cf361833aa6b",
