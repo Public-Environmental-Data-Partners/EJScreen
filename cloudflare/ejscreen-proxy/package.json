@@ -1,0 +1,18 @@
+{
+  "name": "ejscreen-origin-proxy",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "packageManager": "pnpm@11.19.0",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "check": "node --check src/index.mjs",
+    "deploy:dry-run": "wrangler deploy --dry-run",
+    "test": "node --test"
+  },
+  "devDependencies": {
+    "wrangler": "4.126.0"
+  }
+}
