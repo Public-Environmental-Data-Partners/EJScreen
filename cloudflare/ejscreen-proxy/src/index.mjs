@@ -61,7 +61,11 @@ export function isCacheableStaticRequest(request) {
   return STATIC_EXTENSIONS.has(filename.slice(extensionIndex));
 }
 
-function isRevalidatableHtmlResponse(request, responseHeaders) {
+function isRevalidatableHtmlResponse(
+  request,
+  responseStatus,
+  responseHeaders,
+) {
   if (request.method !== "GET" && request.method !== "HEAD") {
     return false;
   }
@@ -73,7 +77,11 @@ function isRevalidatableHtmlResponse(request, responseHeaders) {
     pathname.endsWith(".htm");
   const contentType = responseHeaders.get("Content-Type") || "";
 
-  return isExplicitHtml && /^text\/html(?:;|$)/i.test(contentType);
+  return (
+    isExplicitHtml &&
+    (responseStatus === 304 ||
+      (responseStatus === 200 && /^text\/html(?:;|$)/i.test(contentType)))
+  );
 }
 
 function setCookieValues(headers) {
@@ -197,11 +205,13 @@ export async function proxyRequest(request, env = {}, fetchImpl = fetch) {
 
   const headers = new Headers(upstreamResponse.headers);
   let cacheMode = "no-store";
-  if (upstreamResponse.status === 200 && isCacheableStaticRequest(request)) {
+  if (
+    (upstreamResponse.status === 200 || upstreamResponse.status === 304) &&
+    isCacheableStaticRequest(request)
+  ) {
     cacheMode = "static";
   } else if (
-    upstreamResponse.status === 200 &&
-    isRevalidatableHtmlResponse(request, headers)
+    isRevalidatableHtmlResponse(request, upstreamResponse.status, headers)
   ) {
     cacheMode = "revalidate-html";
   }

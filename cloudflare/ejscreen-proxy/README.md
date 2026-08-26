@@ -23,8 +23,10 @@ Cloudflare operator and must follow the runbook below.
   Only successful GET/HEAD requests for an explicit static extension allowlist
   are edge-cached. Explicit HTML files and `/` remain uncached at the edge but
   use `Cache-Control: no-cache` so browsers may retain and revalidate them while
-  preserving Azure affinity cookies. `.aspx`, `.ashx`, unknown extensions,
-  non-GET requests, and error responses return `Cache-Control: no-store`.
+  preserving Azure affinity cookies. Matching `304 Not Modified` responses
+  retain the same policies so successful revalidation does not evict the stored
+  browser response. `.aspx`, `.ashx`, unknown extensions, non-GET requests, and
+  error responses return `Cache-Control: no-store`.
 - ASP.NET implementation fingerprint headers are removed from proxied
   responses.
 

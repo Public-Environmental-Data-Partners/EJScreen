@@ -169,6 +169,64 @@ test("allows browser revalidation for explicit HTML while bypassing edge cache",
   }
 });
 
+test("keeps HTML revalidation policy on a 304 without Content-Type", async () => {
+  const response = await proxyRequest(
+    new Request(`${PUBLIC_ORIGIN}/comparemapper.html`, {
+      headers: { "If-None-Match": '"html-version"' },
+    }),
+    {},
+    async () =>
+      new Response(null, {
+        status: 304,
+        headers: {
+          ETag: '"html-version"',
+          "Set-Cookie":
+            "ARRAffinity=abc; Path=/; Domain=pedp-ejscreen.azurewebsites.net",
+          "X-Powered-By": "ASP.NET",
+        },
+      }),
+  );
+
+  assert.equal(response.status, 304);
+  assert.equal(response.headers.get("Cache-Control"), "no-cache");
+  assert.equal(
+    response.headers.get("Cloudflare-CDN-Cache-Control"),
+    "no-store",
+  );
+  assert.match(
+    response.headers.get("Set-Cookie"),
+    /Domain=ejscreen\.ejanalysis\.com/i,
+  );
+  assert.equal(response.headers.get("X-Powered-By"), null);
+});
+
+test("keeps static cache policy on a 304 revalidation response", async () => {
+  const response = await proxyRequest(
+    new Request(`${PUBLIC_ORIGIN}/javascript/config.js`, {
+      headers: { "If-None-Match": '"static-version"' },
+    }),
+    {},
+    async () =>
+      new Response(null, {
+        status: 304,
+        headers: {
+          ETag: '"static-version"',
+          "Set-Cookie":
+            "ARRAffinity=abc; Path=/; Domain=pedp-ejscreen.azurewebsites.net",
+        },
+      }),
+  );
+
+  assert.equal(response.status, 304);
+  assert.equal(response.headers.get("Cache-Control"), "public, max-age=3600");
+  assert.equal(
+    response.headers.get("Cloudflare-CDN-Cache-Control"),
+    "public, max-age=86400, stale-if-error=0",
+  );
+  assert.equal(response.headers.get("Set-Cookie"), null);
+  assert.equal(response.headers.get("Cache-Tag"), "ejscreen-static");
+});
+
 test("forces ASP.NET and unknown responses out of every cache", async () => {
   for (const path of [
     "/ejscreenRESTbroker1.aspx",
