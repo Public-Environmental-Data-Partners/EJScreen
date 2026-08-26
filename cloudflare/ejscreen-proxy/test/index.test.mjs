@@ -137,9 +137,40 @@ test("strips affinity cookies and sets separate browser and edge TTLs for static
   assert.equal(response.headers.get("CF-Cache-Status"), "MISS");
 });
 
-test("forces HTML and ASP.NET responses out of every cache", async () => {
+test("allows browser revalidation for explicit HTML while bypassing edge cache", async () => {
+  for (const path of ["/", "/comparemapper.html?zip=20001"]) {
+    const response = await proxyRequest(
+      new Request(`${PUBLIC_ORIGIN}${path}`),
+      {},
+      async () =>
+        new Response("<html></html>", {
+          headers: {
+            "Content-Type": "text/html; charset=utf-8",
+            ETag: '"html-version"',
+            "Set-Cookie":
+              "ARRAffinity=abc; Path=/; Domain=pedp-ejscreen.azurewebsites.net",
+          },
+        }),
+    );
+
+    assert.equal(response.headers.get("Cache-Control"), "no-cache", path);
+    assert.equal(
+      response.headers.get("Cloudflare-CDN-Cache-Control"),
+      "no-store",
+      path,
+    );
+    assert.equal(response.headers.get("ETag"), '"html-version"', path);
+    assert.match(
+      response.headers.get("Set-Cookie"),
+      /Domain=ejscreen\.ejanalysis\.com/i,
+      path,
+    );
+    assert.equal(response.headers.get("Cache-Tag"), null, path);
+  }
+});
+
+test("forces ASP.NET and unknown responses out of every cache", async () => {
   for (const path of [
-    "/comparemapper.html?zip=20001",
     "/ejscreenRESTbroker1.aspx",
     "/mobile/proxy.ashx",
     "/new-handler-without-extension",
@@ -158,6 +189,23 @@ test("forces HTML and ASP.NET responses out of every cache", async () => {
     );
     assert.equal(response.headers.get("Cache-Tag"), null, path);
   }
+});
+
+test("strips ASP.NET implementation fingerprint headers", async () => {
+  const response = await proxyRequest(
+    new Request(`${PUBLIC_ORIGIN}/ejscreenRESTbroker1.aspx`),
+    {},
+    async () =>
+      new Response("dynamic", {
+        headers: {
+          "X-AspNet-Version": "4.0.30319",
+          "X-Powered-By": "ASP.NET",
+        },
+      }),
+  );
+
+  assert.equal(response.headers.get("X-AspNet-Version"), null);
+  assert.equal(response.headers.get("X-Powered-By"), null);
 });
 
 test("does not cache error responses under static-looking paths", async () => {

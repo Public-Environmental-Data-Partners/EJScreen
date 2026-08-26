@@ -21,8 +21,12 @@ Cloudflare operator and must follow the runbook below.
   from static responses so they do not prevent edge caching.
 - Worker-output caching is enabled, with version-isolated cache entries.
   Only successful GET/HEAD requests for an explicit static extension allowlist
-  are cached. HTML, `.aspx`, `.ashx`, unknown extensions, non-GET requests, and
-  error responses return `Cache-Control: no-store`.
+  are edge-cached. Explicit HTML files and `/` remain uncached at the edge but
+  use `Cache-Control: no-cache` so browsers may retain and revalidate them while
+  preserving Azure affinity cookies. `.aspx`, `.ashx`, unknown extensions,
+  non-GET requests, and error responses return `Cache-Control: no-store`.
+- ASP.NET implementation fingerprint headers are removed from proxied
+  responses.
 
 The explicit static allowlist is:
 
@@ -110,9 +114,12 @@ Expected results:
   `HIT` (an initial `EXPIRED` is also possible after invalidation).
 - HTML and the root-level/nested ASP.NET handlers report `BYPASS` or another
   uncached status, never `HIT`, and do not return an `Age` header.
+- HTML and `/` return browser `Cache-Control: no-cache`; ASP.NET handlers return
+  `Cache-Control: no-store`.
 - The POST probe returns CSV content containing the submitted values. It must
   not be changed into a GET or cached.
 - No response exposes an Azure hostname in `Location`.
+- No response exposes `X-Powered-By` or `X-AspNet-Version`.
 
 ## Deploy and purge cycle
 

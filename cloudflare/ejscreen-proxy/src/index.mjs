@@ -61,6 +61,21 @@ export function isCacheableStaticRequest(request) {
   return STATIC_EXTENSIONS.has(filename.slice(extensionIndex));
 }
 
+function isRevalidatableHtmlResponse(request, responseHeaders) {
+  if (request.method !== "GET" && request.method !== "HEAD") {
+    return false;
+  }
+
+  const pathname = new URL(request.url).pathname.toLowerCase();
+  const isExplicitHtml =
+    pathname === "/" ||
+    pathname.endsWith(".html") ||
+    pathname.endsWith(".htm");
+  const contentType = responseHeaders.get("Content-Type") || "";
+
+  return isExplicitHtml && /^text\/html(?:;|$)/i.test(contentType);
+}
+
 function setCookieValues(headers) {
   if (typeof headers.getSetCookie === "function") {
     return headers.getSetCookie();
@@ -116,11 +131,17 @@ function rewriteOriginRedirect(headers, incomingUrl, upstreamUrl) {
   headers.set("Location", publicRedirect.toString());
 }
 
-function applyCachePolicy(headers, cacheStatic, env = {}) {
+function applyCachePolicy(headers, cacheMode, env = {}) {
   headers.delete("Cache-Tag");
   headers.delete("Cloudflare-CDN-Cache-Control");
 
-  if (!cacheStatic) {
+  if (cacheMode === "revalidate-html") {
+    headers.set("Cache-Control", "no-cache");
+    headers.set("Cloudflare-CDN-Cache-Control", "no-store");
+    return;
+  }
+
+  if (cacheMode !== "static") {
     headers.set("Cache-Control", "no-store");
     headers.set("Cloudflare-CDN-Cache-Control", "no-store");
     return;
@@ -175,12 +196,21 @@ export async function proxyRequest(request, env = {}, fetchImpl = fetch) {
   }
 
   const headers = new Headers(upstreamResponse.headers);
-  const cacheStatic =
-    upstreamResponse.status === 200 && isCacheableStaticRequest(request);
+  let cacheMode = "no-store";
+  if (upstreamResponse.status === 200 && isCacheableStaticRequest(request)) {
+    cacheMode = "static";
+  } else if (
+    upstreamResponse.status === 200 &&
+    isRevalidatableHtmlResponse(request, headers)
+  ) {
+    cacheMode = "revalidate-html";
+  }
 
   rewriteOriginRedirect(headers, incomingUrl, upstreamUrl);
   rewriteCookieDomains(headers, incomingUrl.hostname, upstreamUrl.hostname);
-  applyCachePolicy(headers, cacheStatic, env);
+  applyCachePolicy(headers, cacheMode, env);
+  headers.delete("X-AspNet-Version");
+  headers.delete("X-Powered-By");
   headers.set("X-EJScreen-Proxy", "cloudflare-worker");
 
   return new Response(upstreamResponse.body, {
