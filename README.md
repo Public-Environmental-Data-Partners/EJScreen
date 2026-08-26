@@ -40,6 +40,7 @@ Only one kind of place is used per link, in the order listed above (e.g., if `fi
 
 ## Repo Resources
 - [Installing EJScreen locally](INSTALLATION.md)
+- [Cloudflare origin proxy deployment and cache runbook](cloudflare/ejscreen-proxy/README.md)
 - [Code of Conduct](CONDUCT.md)
 - [Contributing](CONTRIBUTING.md)
 - [Issues to work on or log](https://github.com/edgi-govdata-archiving/EJScreen/issues)

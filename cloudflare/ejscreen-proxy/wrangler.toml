@@ -1,0 +1,17 @@
+name = "ejscreen-origin-proxy"
+main = "src/index.mjs"
+compatibility_date = "2026-08-26"
+workers_dev = false
+
+[[routes]]
+pattern = "ejscreen.ejanalysis.com/*"
+zone_name = "ejanalysis.com"
+
+[cache]
+enabled = true
+cross_version_cache = false
+
+[vars]
+UPSTREAM_ORIGIN = "https://pedp-ejscreen.azurewebsites.net"
+STATIC_BROWSER_TTL_SECONDS = "3600"
+STATIC_EDGE_TTL_SECONDS = "86400"

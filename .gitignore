@@ -1,1 +1,3 @@
 .vscode/settings.json
+cloudflare/ejscreen-proxy/node_modules/
+cloudflare/ejscreen-proxy/.wrangler/
