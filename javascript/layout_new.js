@@ -160,15 +160,11 @@ require([
 	var displayLocation = false;
 	var pointsym = {
 		// symbol used for points
-		type: "simple-marker", // autocasts as new SimpleMarkerSymbol()
-		style: "cross",
-		color: "rgba(255, 0, 255, 1.0)",
-		size: "12px",
-		outline: {
-			// autocasts as new SimpleLineSymbol()
-			color: "rgba(255, 0, 255, 1.0)",
-			width: 1, // points
-		},
+		type: "picture-marker", // autocasts as new PictureMarkerSymbol()
+		url: "images/redpin.png",
+		width: "32px",
+		height: "32px",
+		yoffset: "15px",
 	};
 	var linesym = {
 		// symbol used for polylines
