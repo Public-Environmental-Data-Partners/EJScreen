@@ -1,4 +1,6 @@
 //controls label titles and order seen in TOC panel by category
+var env_update = '<br><div style="background-color: #0056b3; color: white; padding: 1px 4px; display: inline-block; font-family: sans-serif; font-size: 8px; font-weight: bold; border-radius: 2px;"> Latest Env Data (2022)</div>'
+var acs_update = '<br><div style="background-color: #b36b00; color: white; padding: 1px 4px; display: inline-block; font-family: sans-serif; font-size: 8px; font-weight: bold; border-radius: 2px;"> Latest Census Data (2024)</div>'
 var ejJson = {
 	Primary: {
 		status: true,
@@ -14,7 +16,7 @@ var ejJson = {
 					"https://www.epa.gov/ejscreen/glossary-ejscreen-terms#category-ej-indexes",
 				columns: {
 					B_D2_PM25: {
-						description: "Particulate Matter 2.5",
+						description: "Particulate Matter 2.5"+env_update+acs_update,
 						mouseover:"Annual average concentration of particles 2.5 microns or smaller in air",
 						legendtitle: "EJ Index  Particulate Matter 2.5",
 						txtname: "T_D2_PM25",
@@ -29,7 +31,7 @@ var ejJson = {
 						ejmapindex_state: ejmapindex_state,
 					},
 					B_D2_OZONE: {
-						description: "Ozone",
+						description: "Ozone"+env_update+acs_update,
 						mouseover:"Average of maximum daily ozone concentrations in air",
 						legendtitle: "EJ Index  Ozone",
 						txtname: "T_D2_OZONE",
@@ -43,7 +45,7 @@ var ejJson = {
 						ejmapindex_state: ejmapindex_state,
 					},
 					B_D2_NO2: {
-						description: "Nitrogen Dioxide (NO\u2082)",
+						description: "Nitrogen Dioxide (NO\u2082)"+acs_update,
 						mouseover:"Annual average concentration of NO\u2082 levels in air",					
 						legendtitle:
 							"EJ Index<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Nitrogen Dioxide (NO\u2082)",
@@ -59,7 +61,7 @@ var ejJson = {
 						ejmapindex_state: ejmapindex_state,
 					},
 					B_D2_DSLPM: {
-						description: "Diesel Particulate Matter",
+						description: "Diesel Particulate Matter"+acs_update,
 						mouseover:"Concentration of diesel particulate matter in air ",
 						legendtitle:
 							"EJ Index<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Diesel Particulate Matter",
@@ -75,7 +77,7 @@ var ejJson = {
 						ejmapindex_state: ejmapindex_state,
 					},
 					B_D2_RSEI_AIR: {
-						description: "Toxic Releases to Air",
+						description: "Toxic Releases to Air"+acs_update,
 						mouseover:"Average annual chemical concentrations in air weighted by relative toxicity",
 						legendtitle:
 							"EJ Index<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Toxic Releases to Air",
@@ -91,7 +93,7 @@ var ejJson = {
 						ejmapindex_state: ejmapindex_state,
 					},
 					B_D2_PTRAF: {
-						description: "Traffic Proximity",
+						description: "Traffic Proximity"+acs_update,
 						mouseover:"Count of vehicles per day at major roads divided by distance",	
 						legendtitle:
 							"EJ Index<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Traffic Proximity",
@@ -107,7 +109,7 @@ var ejJson = {
 						ejmapindex_state: ejmapindex_state,
 					},
 					B_D2_LDPNT: {
-						description: "Lead Paint",
+						description: "Lead Paint"+acs_update,
 						mouseover:"Housing built before 1960, as indicator of potential exposure to lead paint",						
 						legendtitle:
 							"EJ Index<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Lead Paint",
@@ -123,7 +125,7 @@ var ejJson = {
 						ejmapindex_state: ejmapindex_state,
 					},
 					B_D2_PNPL: {
-						description: "Superfund Proximity",
+						description: "Superfund Proximity"+acs_update,
 						mouseover:"Count of proposed and listed NPL (National Priorities List) sites divided by distance",	
 						legendtitle:
 							"EJ Index<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Superfund Proximity",
@@ -139,7 +141,7 @@ var ejJson = {
 						ejmapindex_state: ejmapindex_state,
 					},
 					B_D2_PRMP: {
-						description: "RMP Facility Proximity",
+						description: "RMP Facility Proximity"+acs_update,
 						mouseover:"Count of facilities with required Risk Management Plans divided by distance",	
 						legendtitle:
 							"EJ Index<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;RMP Facility Proximity",
@@ -155,7 +157,7 @@ var ejJson = {
 						ejmapindex_state: ejmapindex_state,
 					},
 					B_D2_PTSDF: {
-						description: "Hazardous Waste Proximity",
+						description: "Hazardous Waste Proximity"+acs_update,
 						mouseover:"Count of TSDFs and LQGs divided by distance",	
 						legendtitle:
 							"EJ Index<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Hazardous Waste Proximity",
@@ -171,7 +173,7 @@ var ejJson = {
 						ejmapindex_state: ejmapindex_state,
 					},
 					B_D2_UST: {
-						description: "Underground Storage Tanks",
+						description: "Underground Storage Tanks"+acs_update,
 						mouseover:"Count of Leaking UST and USTs within a buffered block group",
 						legendtitle:
 							"EJ Index<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Underground Storage Tanks",
@@ -187,7 +189,7 @@ var ejJson = {
 						ejmapindex_state: ejmapindex_state,
 					},
 					B_D2_PWDIS: {
-						description: "Wastewater Discharge",
+						description: "Wastewater Discharge"+env_update+acs_update,
 						mouseover:"Average annual chemical concentrations in water weighted by relative toxicity",
 						legendtitle:
 							"EJ Index<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Wastewater Discharge",
@@ -203,7 +205,7 @@ var ejJson = {
 						ejmapindex_state: ejmapindex_state,
 					},										
 					B_D2_DWATER: {
-						description: "Drinking Water Non-Compliance",
+						description: "Drinking Water Non-Compliance"+acs_update,
 						mouseover:"Number of drinking water violations for community water systems in non-compliance ",		
 						legendtitle:
 							"EJ Index<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Drinking Water Non-Compliance",
@@ -230,7 +232,7 @@ var ejJson = {
 					"https://www.epa.gov/ejscreen/glossary-ejscreen-terms#category-demographics",
 				columns: {
 					B_DEMOGIDX_2: {
-						description: "Demographic Index",
+						description: "Demographic Index"+acs_update,
 						mouseover: "Average of low-income and people of color",
 						legendtitle:
 							"Demographic Data<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Demographic Index",
@@ -247,7 +249,7 @@ var ejJson = {
 						ejmapindex_state: ejmapindex_state,
 					},
 					B_DEMOGIDX_5: {
-						description: "Supplemental Demographic Index",
+						description: "Supplemental Demographic Index"+acs_update,
 						mouseover: "Average of low-income, persons with disabilities, less than high school education, limited English speaking, and low life expectancy",
 						legendtitle:
 							"Demographic Data<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Supplemental Demographic Index",
@@ -264,7 +266,7 @@ var ejJson = {
 						ejmapindex_state: ejmapindex_state,
 					},
 					B_PEOPCOLORPCT: {
-						description: "People of Color",
+						description: "People of Color"+acs_update,
 						mouseover: "Individuals who listed their racial status as a race other than white alone and/or list their ethnicity as Hispanic or Latino",
 						legendtitle:
 							"Demographic Data<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;People of Color",
@@ -281,7 +283,7 @@ var ejJson = {
 						ejmapindex_state: ejmapindex_state,
 					},
 					B_LOWINCPCT: {
-						description: "Low Income",
+						description: "Low Income"+acs_update,
 						mouseover: "Individuals whose household income is less than twice the poverty level",
 						legendtitle:
 							"Demographic Data<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Low Income",
@@ -314,7 +316,7 @@ var ejJson = {
 						// ejmapindex_state: ejmapindex_state,
 					// },
 					B_UNEMPPCT: {
-						description: "Unemployment Rate",
+						description: "Unemployment Rate"+acs_update,
 						mouseover: "Individuals who did not have a job during the reporting period",
 						legendtitle:
 							"Demographic Data<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Unemployment Rate",
@@ -330,7 +332,7 @@ var ejJson = {
 						ejmapindex_state: ejmapindex_state,
 					},
 					B_LINGISOPCT: {
-						description: "Limited English Speaking",
+						description: "Limited English Speaking"+acs_update,
 						mouseover: "Percent of households in which no one age 14 and over speaks English 'very well' or speaks English only ",
 						legendtitle:
 							"Demographic Data<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Limited English Speaking",
@@ -347,7 +349,7 @@ var ejJson = {
 						ejmapindex_state: ejmapindex_state,
 					},
 					B_LESSHSPCT: {
-						description: "Less Than High School Education",
+						description: "Less Than High School Education"+acs_update,
 						mouseover: "Individuals age 25 and over with less than high school degree",
 						legendtitle:
 							"Demographic Data<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Less Than High School Education",
@@ -364,7 +366,7 @@ var ejJson = {
 						ejmapindex_state: ejmapindex_state,
 					},
 					B_UNDER5PCT: {
-						description: "Under Age 5",
+						description: "Under Age 5"+acs_update,
 						mouseover: "Percent of individuals under age 5",
 						legendtitle:
 							"Demographic Data<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Under Age 5",
@@ -380,7 +382,7 @@ var ejJson = {
 						ejmapindex_state: ejmapindex_state,
 					},
 					B_OVER64PCT: {
-						description: "Over Age 64",
+						description: "Over Age 64"+acs_update,
 						mouseover: "Percent of individuals over age 64",
 						legendtitle:
 							"Demographic Data<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Over Age 64",
@@ -405,7 +407,7 @@ var ejJson = {
 					"https://www.epa.gov/ejscreen/glossary-ejscreen-terms#category-environmental",
 				columns: {
 					B_PM25: {
-						description: "Particulate Matter 2.5",
+						description: 'Particulate Matter 2.5'+env_update ,
 						mouseover: "Annual average concentration of particles 2.5 microns or smaller in air",
 						legendtitle: "Environmental Data Particular Matter 2.5",
 						txtname: "T_PM25",
@@ -420,7 +422,7 @@ var ejJson = {
 						ejmapindex_state: ejmapindex_state,
 					},
 					B_OZONE: {
-						description: "Ozone",
+						description: "Ozone"+env_update,
 						mouseover: "Average of maximum daily ozone concentrations in air",
 						legendtitle: "Environmental Data Ozone",
 						txtname: "T_OZONE",
@@ -568,7 +570,7 @@ var ejJson = {
 						legendtitle:
 							"Environmental Data<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Underground Storage Tanks",
 						txtname: "T_UST",
-						idfldname: "T_DEMOGIDX_2,T_PWDIS",
+						idfldname: "T_DEMOGIDX_2,T_UST",
 						cat: "P_ENV",
 						hovertext:
 							"Environmental Indicatores: Underground Storage Tanks - UST facilities/square km",
@@ -579,7 +581,7 @@ var ejJson = {
 						ejmapindex_state: ejmapindex_state,
 					},
 					B_PWDIS: {
-						description: "Wastewater Discharge",
+						description: "Wastewater Discharge"+env_update,
 						mouseover: "Average annual chemical concentrations in water weighted by relative toxicity",
 						legendtitle:
 							"Environmental Data<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Wastewater Discharge",
@@ -675,7 +677,7 @@ var ejJson = {
 					"https://www.epa.gov/ejscreen/glossary-ejscreen-terms#category-ej-indexes",
 				columns: {
 					B_D5_PM25: {
-						description: "Particulate Matter 2.5",
+						description: "Particulate Matter 2.5"+env_update+acs_update,
 						mouseover: "Annual average concentration of particles 2.5 microns or smaller in air",
 						legendtitle: "Supplemental Indexes:  Particulate Matter 2.5",
 						txtname: "T_D5_PM25",
@@ -690,7 +692,7 @@ var ejJson = {
 						ejmapindex_state: ejmapindex_state,
 					},
 					B_D5_OZONE: {
-						description: "Ozone",
+						description: "Ozone"+env_update+acs_update,
 						mouseover: "Average of maximum daily ozone concentrations in air",
 						legendtitle: "Supplemental Indexes:  Ozone",
 						txtname: "T_D5_OZONE",
@@ -704,7 +706,7 @@ var ejJson = {
 						ejmapindex_state: ejmapindex_state,
 					},					
 					B_D5_NO2: {
-						description: "Nitrogen Dioxide (NO\u2082)",
+						description: "Nitrogen Dioxide (NO\u2082)"+acs_update,
 						mouseover: "Annual average concentration of NO\u2082 levels in air",
 						legendtitle:
 							"Supplemental Index<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Nitrogen Dioxide (NO\u2082)",
@@ -720,7 +722,7 @@ var ejJson = {
 						ejmapindex_state: ejmapindex_state,
 					},
 					B_D5_DSLPM: {
-						description: "Diesel Particulate Matter",
+						description: "Diesel Particulate Matter"+acs_update,
 						mouseover: "Concentration of diesel particulate matter in air",
 						legendtitle:
 							"Supplemental Index<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Diesel Particulate Matter",
@@ -736,7 +738,7 @@ var ejJson = {
 						ejmapindex_state: ejmapindex_state,
 					},
 					B_D5_RSEI_AIR: {
-						description: "Toxic Releases to Air",
+						description: "Toxic Releases to Air"+acs_update,
 						mouseover:"Average annual chemical concentrations in air weighted by relative toxicity",
 						legendtitle:
 							"Supplemental Index<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Toxic Releases to Air",
@@ -752,7 +754,7 @@ var ejJson = {
 						ejmapindex_state: ejmapindex_state,
 					},
 					B_D5_PTRAF: {
-						description: "Traffic Proximity",
+						description: "Traffic Proximity"+acs_update,
 						mouseover: "Count of vehicles per day at major roads divided by distance",
 						legendtitle:
 							"Supplemental Index<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Traffic Proximity",
@@ -768,7 +770,7 @@ var ejJson = {
 						ejmapindex_state: ejmapindex_state,
 					},
 					B_D5_LDPNT: {
-						description: "Lead Paint",
+						description: "Lead Paint"+acs_update,
 						mouseover: "Housing built before 1960, as indicator of potential exposure to lead paint",
 						legendtitle:
 							"Supplemental Index<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Lead Paint",
@@ -784,7 +786,7 @@ var ejJson = {
 						ejmapindex_state: ejmapindex_state,
 					},
 					B_D5_PNPL: {
-						description: "Superfund Proximity",
+						description: "Superfund Proximity"+acs_update,
 						mouseover: "Count of proposed and listed NPL (National Priorities List) sites divided by distance",
 						legendtitle:
 							"Supplemental Index<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Superfund Proximity",
@@ -800,7 +802,7 @@ var ejJson = {
 						ejmapindex_state: ejmapindex_state,
 					},
 					B_D5_PRMP: {
-						description: "RMP Facility Proximity",
+						description: "RMP Facility Proximity"+acs_update,
 						mouseover: "Count of facilities with required Risk Management Plans divided by distance",
 						legendtitle:
 							"Supplemental Index<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;RMP Facility Proximity",
@@ -816,7 +818,7 @@ var ejJson = {
 						ejmapindex_state: ejmapindex_state,
 					},
 					B_D5_PTSDF: {
-						description: "Hazardous Waste Proximity",
+						description: "Hazardous Waste Proximity"+acs_update,
 						mouseover: "Count of TSDFs and LQGs divided by distance",
 						legendtitle:
 							"Supplemental Index<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Hazardous Waste Proximity",
@@ -832,7 +834,7 @@ var ejJson = {
 						ejmapindex_state: ejmapindex_state,
 					},
 					B_D5_UST: {
-						description: "Underground Storage Tanks",
+						description: "Underground Storage Tanks"+acs_update,
 						mouseover: "Count of Leaking UST and USTs within a buffered block group",
 						legendtitle:
 							"Supplemental Index<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Underground Storage Tanks",
@@ -848,7 +850,7 @@ var ejJson = {
 						ejmapindex_state: ejmapindex_state,
 					},
 					B_D5_PWDIS: {
-						description: "Wastewater Discharge",
+						description: "Wastewater Discharge"+env_update+acs_update,
 						mouseover: "Average annual chemical concentrations in water weighted by relative toxicity",
 						legendtitle:
 							"Supplemental Index<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Wastewater Discharge",
@@ -864,7 +866,7 @@ var ejJson = {
 						ejmapindex_state: ejmapindex_state,
 					},				
 					B_D5_DWATER: {
-						description: "Drinking Water Non-Compliance",
+						description: "Drinking Water Non-Compliance"+acs_update,
 						mouseover: "Number of drinking water violations for community water systems in non-compliance",
 						legendtitle:
 							"Supplemental Index<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Drinking Water Non-Compliance",

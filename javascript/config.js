@@ -133,9 +133,9 @@ var geocoderurl =
 
 var lookuptableindex = 0
 var ejmapindex = 0; //index of main ej layer in service
-var ejmapindex_state = 0; //index of state ej layer in service - maybe update to 1
+var ejmapindex_state = 1; //index of state ej layer in service - maybe update to 1
 var ejmapindexsupp = 0; 
-var ejmapindexsupp_state = 0; // maybe update to 1
+var ejmapindexsupp_state = 1; // maybe update to 1
 var bgIDfieldname = "ID";
 var recordlimit = 1000;
 var arealimit = 500; //set estimated area limit to 500 sq miles
