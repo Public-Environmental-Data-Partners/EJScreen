@@ -18,9 +18,9 @@
 // Version now tracks the EJAM release this EJScreen deployment is based on
 // (EJAM v3.YYYY.P, where YYYY is the ACS end-year vintage), so the header,
 // report labels, and print footer all reflect the same release line.
-var versionText = "Version 3.2022.2"; //version text label for title etc.
-var versionNumber = "3.2022.2"; //numeric version used in code
-var versionDetailed = "3.2022.2.01"; //detailed version number for dev records, not exposed in app
+var versionText = "Version 4.2024.0"; //version text label for title etc.
+var versionNumber = "4.2024.0"; //numeric version used in code
+var versionDetailed = "4.2024.0.01"; //detailed version number for dev records, not exposed in app
 
 //version history
 //2.2.Beta0 - 6/21/23 - updated mobile map and added version detail to config
@@ -55,21 +55,19 @@ esriConfig.request.timeout = 120000; //2 minutes
 });
 
 
-var localRESTurl = "https://services2.arcgis.com/w4yiQqB14ZaAGzJq/arcgis/rest/services/";
-//var localRESTurl = "https://ejscreen.epa.gov/arcgis/rest/services/";
-var prodRESTurl = "https://geopub.epa.gov/arcgis/rest/services/";
+var localRESTurl = "https://services.arcgis.com/EXyRv0dqed53BmG2/arcgis/rest/services/";
+var ejscreenservice = localRESTurl + "EJSCREEN/FeatureServer/";
+var ejscreenservice_state =  ejscreenservice // localRESTurl + "EJScreenStatePercentilesBlockGroup/FeatureServer/";
 
-//https://services.arcgis.com/EXyRv0dqed53BmG2/arcgis/rest/services/EJScreen/FeatureServer // EDN test
-//main ej service for ej report section
-var ejscreenservice = localRESTurl + "EJScreen_US_Percentiles_Block_Group_gdb_V_2.32_(Parent)_view/FeatureServer/";
+var prodRESTurl = "https://geopub.epa.gov/arcgis/rest/services/";
 //ej extra service for extra indicators in ej report section
 var ejscreenextraservice = localRESTurl + "ejscreen/ejscreen_extra/MapServer";
 //ej demog for demog section of ej report
 var ejscreendemogservice = localRESTurl + "ejscreen/ejquery/MapServer";
-
-var ejscreenservice_state =  localRESTurl + "EJScreenStatePercentilesBlockGroup/FeatureServer/";
 var ejscreenApiPageUrl =
 	localRESTurl + "ejscreen/ejscreen_v2024_with_as_cnmi_gu_vi/MapServer/exts/EJCensusReports/GetEJScreen";
+
+
 
 // --- EJAM integration endpoints (single source of truth) -------------------
 // Used by multisite.js (Multisite Report + "Send to EJAM" handoff), the
@@ -135,9 +133,9 @@ var geocoderurl =
 
 var lookuptableindex = 0
 var ejmapindex = 0; //index of main ej layer in service
-var ejmapindex_state = 0; //index of state ej layer in service
-var ejmapindexsupp = 0;
-var ejmapindexsupp_state = 0;
+var ejmapindex_state = 0; //index of state ej layer in service - maybe update to 1
+var ejmapindexsupp = 0; 
+var ejmapindexsupp_state = 0; // maybe update to 1
 var bgIDfieldname = "ID";
 var recordlimit = 1000;
 var arealimit = 500; //set estimated area limit to 500 sq miles
@@ -2517,7 +2515,7 @@ var ejlayoutJSON = {
 	Primary: {
 		services: {			
 			"nation":{"url": ejscreenservice, "index" : 0, "titleSuffix" : "National Percentiles"}, 
-			"state":{"url": ejscreenservice_state, "index" : 0, "titleSuffix" : "State Percentiles"}
+			"state":{"url": ejscreenservice_state, "index" : 1, "titleSuffix" : "State Percentiles"}
 		},		
 		status: false,
 		description: "Primary EJ Indexes",
@@ -2609,7 +2607,7 @@ var ejlayoutJSON = {
 	Supplementary: {
 		services: {
 			"nation":{"url": ejscreenservice, "index" : 0, "titleSuffix" : "National Percentiles"},
-			"state":{"url": ejscreenservice_state, "index" : 0, "titleSuffix" : "State Percentiles"}
+			"state":{"url": ejscreenservice_state, "index" : 1, "titleSuffix" : "State Percentiles"}
 		},		
 		status: false,
 		description: "Supplemental Indexes",
@@ -3382,15 +3380,15 @@ var dataobjSUPP = {
 //demog widget settings
 var demogJSON = {
 	ejdemog: {
-		title: "2018-2022 ACS",
-		tiptext: "2018-2022 ACS",
+		title: "2020-2024 ACS",
+		tiptext: "2020-2024 ACS",
 		dynamic: false,
 		type: "agsdemog",
-		"layerurl": "https://services.arcgis.com/EXyRv0dqed53BmG2/arcgis/rest/services/EJScreen_Census/",//replace with my feature service link
+		"layerurl": "https://services.arcgis.com/EXyRv0dqed53BmG2/arcgis/rest/services/EJScreen_Census/",// UPDATE
 		service: "",
 		lookupindex: 6,
 		description:
-			"2018-2022 ACS demographics are a set of variables derived based on a subset of 2018-2022 American Community Survey data.",
+			"2020-2024 ACS demographics are a set of variables derived based on a subset of 2020-2024 American Community Survey data.",
 		process: false,
 		transparency: "0.5",
 		identify: "yes",
@@ -3402,7 +3400,7 @@ var demogJSON = {
 				minlevel: 10,
 				maxlevel: 20,
 				layeridx: 1,
-				level: "2018-2022 ACS (Blockgroup)",
+				level: "2020-2024 ACS (Blockgroup)",
 				headerfields: {
 					STCNTRBG: "Blockgroup ID",
 					STUSAB: "State",
@@ -3413,7 +3411,7 @@ var demogJSON = {
 				minlevel: 8,
 				maxlevel: 10,
 				layeridx: 5,
-				level: "2018-2022 ACS (Tract)",
+				level: "2020-2024 ACS (Tract)",
 				headerfields: {
 					STCNTR: "Tract ID",
 					STUSAB: "State",
@@ -3424,7 +3422,7 @@ var demogJSON = {
 				minlevel: 4,
 				maxlevel: 8,
 				layeridx: 0,
-				level: "2018-2022 ACS (County)",
+				level: "2020-2024 ACS (County)",
 				headerfields: {
 					CNTYNAME: "County Name",
 					STUSAB: "State",
@@ -3436,7 +3434,7 @@ var demogJSON = {
 				minlevel: 0,
 				maxlevel: 4,
 				layeridx: 2,
-				level: "2018-2022 ACS (State)",
+				level: "2020-2024 ACS (State)",
 				headerfields: { STATE_NAME: "State", TOTALPOP: "Total Population" },
 			},
 		},
