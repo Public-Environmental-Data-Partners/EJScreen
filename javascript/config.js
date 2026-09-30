@@ -5,10 +5,10 @@
  Purpose:     This files defines the version of EJScreen, initializes the global variables used throughout
               the application such as Urls and the JSON objects used for the graphic user interface. 
  
- Author:      SAIC, EPA OMS Contractor
+ Author:      SAIC, EPA OMS Contractor until 2025-01. PEDP in 2025-2026.
 
  Created:     01/19/2024
- Updated:     01/22/2024
+ Updated:     01/22/2024, then 09/29/2026
  
 **********************************************************************************************************/ 
 
@@ -20,8 +20,9 @@
 //
 // Change only `versionNumber` below. Everything else is derived from it:
 //   - page title and its "?" hover text     (javascript/defaults.js)
-//   - report footers                         (EJscreen_SOE.aspx, EJscreen_SOE_report.aspx,
+//   - old report footers                         (EJscreen_SOE.aspx, EJscreen_SOE_report.aspx,
 //                                             EJscreen_report.aspx, mobile/EJscreen_mobile.aspx)
+//   - API-based footers                     (handled by EJAM-API via EJAM repo and R package)
 //   - printed map footer                     (mapdijit/Print.js)
 //   - maintenance page                       (index_maintenance.html)
 //
@@ -54,10 +55,10 @@ var versionACS = (function (v) {              // ACS 5-year span implied by the 
 
 //8.5.24 - updated to 2.3.01
 //9.29.26 - 3.2022.3; the version is now set in one place (versionNumber, above)
+
 //2.3.02 - 6/29/26 - EJAM API/app URLs set here (window.EJAM_API_BASE / window.EJAM_APP_URL); used by multisite tools, the Multisite Tool link, and the single-site report.
 
 //end version history
-
 
 
 //fire google tag manager
