@@ -31,6 +31,13 @@ Only one kind of place is used per link, in the order listed above (e.g., if `fi
 
 **ZIP code vs county FIPS:** a bare 5-digit number is ambiguous — 10001 is both a Manhattan ZIP code and the county FIPS of Kent County, DE. Deep links resolve it explicitly: `fips=` is always county/tract/blockgroup FIPS, and `zip=` is always a ZIP code. A bare 5-digit `wherestr=` follows EJAM's convention: it is tried as a **county FIPS first** (drawing and selecting the county boundary), and only geocoded the old way (which reads 5 digits as a ZIP) if no county has that code. So prefer `fips=` and `zip=`; `?wherestr=10001,NY` also still forces the ZIP reading. The interactive search box inside the app is unchanged and still treats a bare 5-digit number as a ZIP code.
 
+## Updating the version number
+
+Set `versionNumber` near the top of [javascript/config.js](javascript/config.js). That is the only place
+it needs to change. The page title and its hover text, report footers (desktop and mobile), the
+printed-map footer and the maintenance page all read it from there. The version matches the EJAM
+release the deployment is based on (e.g. `3.2022.3` for ACS 2018-2022, `4.2024.0` for ACS 2020-2024).
+
 ## Other helpful resources on EJScreen:
 
 - First-time users may find the 5-minute [EJScreen in 5: A Quick Overview of EJScreen](https://web.archive.org/web/20241008150339/https://www.youtube.com/watch?v=HZp3AWDJt5A) video helpful as an introduction to the tool.

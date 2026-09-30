@@ -1896,7 +1896,7 @@ function doBuffer(geometry) {
         ">
             <span style="font-size: 14px">Report for <span class="LOCATIONSTR">1 mile Ring Centered at 39.002146,-77.921299</span></span>
             <br>
-            <span style="font-size: 14px; font-style: italic;">Report produced <span class="REPORTDATE">July 16, 2024</span> using EJScreen <span class="REPORTVERSION">Version 2.3</span></span>
+            <span style="font-size: 14px; font-style: italic;">Report produced <span class="REPORTDATE">July 16, 2024</span> using EJScreen <span class="REPORTVERSION"></span></span>
             </div>
         <!-- -------------------------------- PAGE 2 ----------------------------------- -->
         <div class="print-page">
@@ -1987,7 +1987,7 @@ function doBuffer(geometry) {
         ">
             <span style="font-size: 14px">Report for <span class="LOCATIONSTR">1 mile Ring Centered at 39.002146,-77.921299</span></span>
             <br>
-            <span style="font-size: 14px; font-style: italic;">Report produced <span class="REPORTDATE">July 16, 2024</span> using EJScreen <span class="REPORTVERSION">Version 2.3</span></span>
+            <span style="font-size: 14px; font-style: italic;">Report produced <span class="REPORTDATE">July 16, 2024</span> using EJScreen <span class="REPORTVERSION"></span></span>
             </div>
         </div>
 

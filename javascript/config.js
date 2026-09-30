@@ -15,12 +15,27 @@
 
 //There are constants used from config.js file too
 
-// Version now tracks the EJAM release this EJScreen deployment is based on
-// (EJAM v3.YYYY.P, where YYYY is the ACS end-year vintage), so the header,
-// report labels, and print footer all reflect the same release line.
-var versionText = "Version 3.2022.2"; //version text label for title etc.
-var versionNumber = "3.2022.2"; //numeric version used in code
-var versionDetailed = "3.2022.2.01"; //detailed version number for dev records, not exposed in app
+// ===========================================================================
+// EJSCREEN VERSION -- THIS IS THE ONE PLACE TO UPDATE IT.
+//
+// Change only `versionNumber` below. Everything else is derived from it:
+//   - page title and its "?" hover text     (javascript/defaults.js)
+//   - report footers                         (EJscreen_SOE.aspx, EJscreen_SOE_report.aspx,
+//                                             EJscreen_report.aspx, mobile/EJscreen_mobile.aspx)
+//   - printed map footer                     (mapdijit/Print.js)
+//   - maintenance page                       (index_maintenance.html)
+//
+// The version tracks the EJAM release this deployment is based on, numbered
+// MAJOR.ACSENDYEAR.PATCH: 3.2022.3 uses ACS 2018-2022 data, 4.2024.0 uses ACS 2020-2024.
+// ===========================================================================
+var versionNumber = "3.2022.3";
+
+var versionText = "Version " + versionNumber; // label for title, reports and print footer
+var versionDetailed = versionNumber + ".01";  // dev records only, not shown in the app
+var versionACS = (function (v) {              // ACS 5-year span implied by the version, e.g. "2018-2022"
+  var endYear = parseInt(String(v).split(".")[1], 10);
+  return (isNaN(endYear) || endYear < 2000) ? "" : (endYear - 4) + "-" + endYear;
+})(versionNumber);
 
 //version history
 //2.2.Beta0 - 6/21/23 - updated mobile map and added version detail to config
@@ -38,6 +53,7 @@ var versionDetailed = "3.2022.2.01"; //detailed version number for dev records, 
 //2.2.11 - 12/14/23 - updated link for Subsidized Housing to correct index
 
 //8.5.24 - updated to 2.3.01
+//9.29.26 - 3.2022.3; the version is now set in one place (versionNumber, above)
 //2.3.02 - 6/29/26 - EJAM API/app URLs set here (window.EJAM_API_BASE / window.EJAM_APP_URL); used by multisite tools, the Multisite Tool link, and the single-site report.
 
 //end version history
