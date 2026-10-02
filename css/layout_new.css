@@ -1204,14 +1204,16 @@ color:black;
   margin-top: 1px; /* Slight alignment tweak */
 }
 
-.data-button {
-    /* Positioning - Sticks to bottom right */
+#data {
+    /* Positioning - Sticks to bottom right, row of buttons */
   position: fixed;
   bottom: 20px; /* Indent from bottom */
   right: 5vw;  /* Indent from right */
   z-index: 1000; /* Keeps it above other elements */
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
-
 
 /* Container to house the logo and handle alignment */
 .info-container {
