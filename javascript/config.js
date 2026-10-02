@@ -761,7 +761,7 @@ var suggestservicesHEALTH = {
 		//layers: [{ id: 3, title: "Cancer" }],
 	},
 	personswithdisabilities: {
-		title: "Persons with Disabililties",
+		title: "Persons with Disabilities",
 		mouseover:"Percent of all persons with disabilities",
 		layerurl: "https://services2.arcgis.com/w4yiQqB14ZaAGzJq/arcgis/rest/services/HealthDisparitiesEJScreen/FeatureServer/4",
 		type: "featurelayer",
