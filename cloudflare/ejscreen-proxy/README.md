@@ -125,29 +125,46 @@ Expected results:
 
 ## Deploy and purge cycle
 
-Static assets carry the cache tag `ejscreen-static`, and Worker-output cache
-keys use the public `ejscreen.ejanalysis.com` hostname. After an Azure content
-deployment, purge only this site's cache through the Cloudflare dashboard
-(`Caching` -> `Configuration` -> `Purge Cache` -> `Hostname`) or the API:
+**Zone cache purges do not clear this Worker's cache.** Worker-output caching
+belongs to the Worker, not to the `ejanalysis.com` zone, and Cloudflare states
+that no zone-level purge (dashboard, API, or Terraform) affects it. On
+2026-10-08, purges by hostname, by the `ejscreen-static` tag, and by exact URL
+were all accepted by the zone purge API, yet `javascript/config.js` stayed
+`CF-Cache-Status: HIT` with a still-increasing `Age`.
+
+The Worker cache key also does not include the hostname. It is keyed by path,
+entrypoint, and Worker version.
+
+Because `cross_version_cache = false`, each Worker version has its own cache,
+so **redeploying the Worker is the purge**. After every Azure content
+deployment, redeploy from this directory:
 
 ```sh
-curl -sS -X POST \
-  "https://api.cloudflare.com/client/v4/zones/${CLOUDFLARE_ZONE_ID}/purge_cache" \
-  -H "Authorization: Bearer ${CLOUDFLARE_API_TOKEN}" \
-  -H 'Content-Type: application/json' \
-  --data '{"hosts":["ejscreen.ejanalysis.com"]}'
+pnpm install --frozen-lockfile
+pnpm wrangler deploy
 ```
 
-Then repeat one static URL twice and confirm `MISS`/`EXPIRED` followed by
-`HIT`. Also repeat the ASP.NET checks and confirm they remain uncached.
+This needs a Cloudflare API token that can edit Worker scripts and Worker
+routes for the `ejanalysis.com` zone. Redeploying unchanged code still creates
+a new Worker version, which starts with an empty cache.
 
-Do not use `purge_everything`: the `ejanalysis.com` zone also fronts services
-whose caches are unrelated to EJScreen.
+Then repeat one static URL twice, without a cache-busting query, and confirm
+`MISS` followed by `HIT` with a small `Age`. Also repeat the ASP.NET checks
+and confirm they remain uncached.
 
-Worker caches are isolated by deployment version (`cross_version_cache =
-false`), so a Worker deployment starts with an empty cache. Origin-only Azure
-deployments do not create a new Worker version and still require the targeted
-hostname purge above.
+Do not use `purge_everything` on the zone. It does not reach this cache, and
+the `ejanalysis.com` zone also fronts services whose caches are unrelated to
+EJScreen.
+
+If edge-cached assets must be cleared without a redeploy, the only supported
+route is `ctx.cache.purge()` called from Worker code, for example
+`ctx.cache.purge({ tags: ["ejscreen-static"] })` behind an authenticated
+endpoint. No such endpoint exists today. Otherwise, cached static assets expire
+after `STATIC_EDGE_TTL_SECONDS` (one day by default).
+
+Any additional EJScreen hostname, such as a frozen archive vintage, needs its
+own Worker. Routing two hostnames to this Worker would share one cache across
+both.
 
 ## Cloudflare references
 
@@ -155,4 +172,5 @@ hostname purge above.
 - [Modify request properties when proxying](https://developers.cloudflare.com/workers/examples/modify-request-property/)
 - [Wrangler routes configuration](https://developers.cloudflare.com/workers/wrangler/configuration/)
 - [Redirect execution order and Trace guidance](https://developers.cloudflare.com/rules/url-forwarding/)
-- [Targeted cache purges](https://developers.cloudflare.com/cache/how-to/purge-cache/)
+- [Purge and invalidate the Workers cache](https://developers.cloudflare.com/workers/cache/purge/)
+- [Workers cache keys](https://developers.cloudflare.com/workers/cache/cache-keys/)
