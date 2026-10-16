@@ -5,10 +5,11 @@
  Purpose:     This files defines the version of EJScreen, initializes the global variables used throughout
               the application such as Urls and the JSON objects used for the graphic user interface. 
  
- Author:      SAIC, EPA OMS Contractor
+ Current Maintainers: Public Environmental Data Partners
+ EPA Authors:   SAIC, EPA OMS Contractor
 
  Created:     01/19/2024
- Updated:     01/22/2024
+ Updated:     September 2026
  
 **********************************************************************************************************/ 
 
@@ -21,27 +22,6 @@
 var versionText = "Version 4.2024.0"; //version text label for title etc.
 var versionNumber = "4.2024.0"; //numeric version used in code
 var versionDetailed = "4.2024.0.01"; //detailed version number for dev records, not exposed in app
-
-//version history
-//2.2.Beta0 - 6/21/23 - updated mobile map and added version detail to config
-//2.2.0 - 6/26/23 - first release
-//2.2.1 - 6/28/23 - fix for 0 pop on report, API changes. Updated EJ entry.html widget
-//2.2.2 - 6/29/23 - fix entry.html and entry2.html. Update demog report and web.config for acs 2021.
-//2.2.3 - 7/11/23 -added and updated IRA data. Fixed issue of showing same data on multiple demog widget popups.
-//2.2.4 - 7/13/23 - added fixes for IRA transparency, report by city error, missing metadata links for IRA layers, IRA layers in sidebyside map. Deployed new ejscreenapi page that returns json data vs html. Removed end slash from homeappurl for home page link.
-//2.2.5 - 7/13/23-2 - updated config and code to show IRA Data as 1 service vs 3 layers and not show J40 by default. Update new ejscreenapi1 that uses new report data and sends back json vs html.
-//2.2.6 - 7/15/23 - added fix for IRA metadata links and updates to API2 pages
-//2.2.7 - 7/24/23 - updated digest report and added json and pjson options to api format dropdowns
-//2.2.8 - 7/27/23 - removed TRI from local hosted list in TOC, updated config for latest nces schools for side by side mapper, fixed Ozone hover text on TOC, added TSCA back to regulated facs,added NH .gov site to whitelist, GET call is validated for url length in API pages
-//2.2.9 - 8/17/23 - updated TSCA label in EF Facilities
-//2.2.10 - 8/18/23 - updated TSCA label for capitalization and updated field description
-//2.2.11 - 12/14/23 - updated link for Subsidized Housing to correct index
-
-//8.5.24 - updated to 2.3.01
-//2.3.02 - 6/29/26 - EJAM API/app URLs set here (window.EJAM_API_BASE / window.EJAM_APP_URL); used by multisite tools, the Multisite Tool link, and the single-site report.
-
-//end version history
-
 
 
 //fire google tag manager
@@ -113,13 +93,14 @@ var ejscreenusaurl = localRESTurl + "ejscreen/ejscreen_v2024_with_as_cnmi_gu_vi/
 var ejscreenenvindexnationalurl = localRESTurl+"ejscreen/ejscreen_v2024_with_as_cnmi_gu_vi/MapServer/33";
 var ejscreenenvindexstateurl = localRESTurl+"ejscreen/ejscreen_v2024_with_as_cnmi_gu_vi/MapServer/34";
 
-
-var helpfileurl = "https://web.archive.org/web/20250000000000*/https://ejscreen.epa.gov/mapper/help/ejscreen_help.pdf";
+// Sept 2026 eag: changing primary help and glossary URLs to pages we are maintaining in EJAM
+// This may not be the final resolution but it is a lot better than the shell out wayback machine pages.
+var helpfileurl = "https://public-environmental-data-partners.github.io/EJAM/articles/ejscreen.html";
 var glossaryurlEJIndexes = "https://web.archive.org/web/20250121194855/https://www.epa.gov/ejscreen/ej-index-descriptions";
 var glossaryurlSuppIndexes = "https://web.archive.org/web/20241202134502/https://www.epa.gov/ejscreen/supplemental-index-descriptions";
 //var glossaryurl = "https://www.epa.gov/ejscreen/glossary-ejscreen-terms";
 //var glossaryurl = "https://ejscreen.epa.gov/ejscreen23/ejscreen-map-descriptions3.html";
-var glossaryurl ="https://web.archive.org/web/20250123161322/https://www.epa.gov/ejscreen/ejscreen-map-descriptions";
+var glossaryurl ="https://public-environmental-data-partners.github.io/EJAM/articles/ejscreen-map-descriptions.html";
 // var homeappurl = "http://localhost:8000"; --SH--What is this used for?
 var v1appurl = "ejscreen_v1/index.html";
 var countybndurl =
