@@ -9,3 +9,6 @@ There are probably many ways to do this. Here's one that works:
 - Download and open VS Code. ASP.NET 4.8 sites require an IIS server. Maybe the easiest way to work with it is to install the "[IIS Express[(https://github.com/warrenbuckley/IIS-Express-Code)" extension to VS Code, enabling you to start/stop/restart the server from within the editor. In the "Extensions" menu of VS Code (Ctrl-Shift-X), search for "IIS Express" and install it.
 - You can run IIS Express by doing Ctrl-Shift-P to access the VS Code commands. Then search for IIS Express: Start Website.
 - A browser should open at the path `localhost:4922` and you should see the EJScreen website.
+
+
+- If you're on a Mac, you can spin up a local host by typing this in your VS Code terminal `python3 -m http.server 4922`

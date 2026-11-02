@@ -144,7 +144,8 @@ var basemapGallery;
 
 var slrMouseOverTxt =
 	"Land at risk of permanent flooding when sea level rises. Over the next 30 years, scientists estimate a 1-3 foot rise along most of the U.S. coastline";
-var metaroot = "https://web.archive.org/web/20250121194843/https://www.epa.gov/ejscreen/ejscreen-map-descriptions";
+// This routes to the main descriptors up on EJAM
+var metaroot = "https://public-environmental-data-partners.github.io/EJAM/articles/ejscreen-map-descriptions"; 
 var metanchors = {
 	//note: ej index anchors are in different section of config below, 
     //additional demog anchors are in TOC.js
