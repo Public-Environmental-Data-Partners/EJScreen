@@ -2341,8 +2341,8 @@ var dynamicJSON = {
 	ejscreen: {
 		description: "EJ Indexes",
 		headerfields: {},
-		footerfields: { "T_LOWINCPCT": "Low Income","T_PEOPCOLORPCT": "People of Color" },
-		usefooteralias: false,
+		footerfields: { "T_PM25": "Particulate Matter 2.5", "T_LOWINCPCT": "Low Income","T_PEOPCOLORPCT": "People of Color" },
+		usefooteralias: true, // true to use from here rather than from the service; updated layers don't have aliases
 		titlefields: { "ID": "FIPS", "CNTY_NAME": "County", "ST_ABBREV": "State", "STATE_NAME":"State Name","ACSTOTPOP": "Population" }
 	},
 	ejscreen_supp: {
