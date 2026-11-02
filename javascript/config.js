@@ -36,7 +36,6 @@ var versionDetailed = "4.2024.0.01"; //detailed version number for dev records, 
 //2.2.9 - 8/17/23 - updated TSCA label in EF Facilities
 //2.2.10 - 8/18/23 - updated TSCA label for capitalization and updated field description
 //2.2.11 - 12/14/23 - updated link for Subsidized Housing to correct index
-
 //8.5.24 - updated to 2.3.01
 //2.3.02 - 6/29/26 - EJAM API/app URLs set here (window.EJAM_API_BASE / window.EJAM_APP_URL); used by multisite tools, the Multisite Tool link, and the single-site report.
 
@@ -51,22 +50,23 @@ var enableGoogleTagManager = true;
 // require(["https://js.arcgis.com/4.20/esri/config"], function (esriConfig) { 
 require(["esri/config"], function (esriConfig) { 
 //Timeout in milliseconds for all esriRequests. Used for call to EJ services for reports.
-esriConfig.request.timeout = 120000; //2 minutes
+	esriConfig.request.timeout = 120000; //2 minutes
 });
 
-
 var localRESTurl = "https://services.arcgis.com/EXyRv0dqed53BmG2/arcgis/rest/services/";
-var ejscreenservice = localRESTurl + "EJSCREEN/FeatureServer/";
-var ejscreenservice_state =  ejscreenservice // localRESTurl + "EJScreenStatePercentilesBlockGroup/FeatureServer/";
+var ejscreenservice = localRESTurl + "EJSCREEN_4_2024_BG_with_AS_CNMI_GU_VI_US_gdb/FeatureServer/";
+var ejscreenservice_state = localRESTurl + "EJSCREEN_4_2024_BG_with_AS_CNMI_GU_VI_STATE_gdb/FeatureServer/";
+
 
 var prodRESTurl = "https://geopub.epa.gov/arcgis/rest/services/";
+/*
 //ej extra service for extra indicators in ej report section
 var ejscreenextraservice = localRESTurl + "ejscreen/ejscreen_extra/MapServer";
 //ej demog for demog section of ej report
 var ejscreendemogservice = localRESTurl + "ejscreen/ejquery/MapServer";
 var ejscreenApiPageUrl =
 	localRESTurl + "ejscreen/ejscreen_v2024_with_as_cnmi_gu_vi/MapServer/exts/EJCensusReports/GetEJScreen";
-
+*/
 
 
 // --- EJAM integration endpoints (single source of truth) -------------------
@@ -78,6 +78,7 @@ window.EJAM_API_BASE = "https://api.ejanalysis.com"; // EJAM REST API base (no t
 window.EJAM_APP_URL  = "https://ejam.publicenvirodata.org/";              // live EJAM web app
 
 
+/*
 var ejscreenservice4SOE = ejscreenservice;
 //to do: needed still?
 var ejscreenservice4SOE_SUPP = localRESTurl + "ejscreen/ejscreen_v2024_with_as_cnmi_gu_vi/MapServer";
@@ -91,20 +92,19 @@ var ejcitySOEurl = ejscreenservice4SOE + "/exts/EJCensusReports/GetEJScreen";
 var ejscreenSOEurl_SUPP = ejscreenservice4SOE_SUPP + "/exts/EJScreen_EJReports/GetEJScreen";
 //to do: needed still?
 var ejcitySOEurl_SUPP = ejscreenservice4SOE_SUPP + "/exts/EJScreen_EJReports/GetEJScreenByCity";
+*/
 
 
 //lookup table with ej and supplemental labels
-//to do: needed still?
-var lookuptable_supp_url="https://geopub.epa.gov/arcgis/rest/services/ejscreen/ejlookupfull_2020/MapServer/1";
-
-var localGeometryService = localRESTurl + "Utilities/Geometry/GeometryServer";
+//var lookuptable_supp_url="https://geopub.epa.gov/arcgis/rest/services/ejscreen/ejlookupfull_2020/MapServer/1";
 //var localPrintService = localRESTurl + "Utilities/PrintingTools/GPServer/Export Web Map Task";
 //var localPrintService = "https://utility.arcgisonline.com/arcgis/rest/services/Utilities/PrintingTools/GPServer/Export Web Map Task";
 //var localPrintService = "https://map23.epa.gov/arcgis/rest/services/Utilities/PrintingTools/GPServer/Export Web Map Task";
 //var localPrintService = "https://epamap36.epa.gov/arcgis/rest/services/Utilities/PrintingTools/GPServer/Export Web Map Task";
+var localGeometryService = localRESTurl + "Utilities/Geometry/GeometryServer";
 var localPrintService = "https://geopub.epa.gov/arcgis/rest/services/Utilities/PrintingTools/GPServer/Export Web Map Task";
 
-
+/*
 //used by report digest
 var ejscreenindexurl = localRESTurl + "ejscreen/ejscreen_v2024_with_as_cnmi_gu_vi/MapServer/33/query";
 var ejscreenstateurl = localRESTurl + "ejscreen/ejscreen_v2024_with_as_cnmi_gu_vi/MapServer/35/query";
@@ -112,7 +112,7 @@ var ejscreenusaurl = localRESTurl + "ejscreen/ejscreen_v2024_with_as_cnmi_gu_vi/
 
 var ejscreenenvindexnationalurl = localRESTurl+"ejscreen/ejscreen_v2024_with_as_cnmi_gu_vi/MapServer/33";
 var ejscreenenvindexstateurl = localRESTurl+"ejscreen/ejscreen_v2024_with_as_cnmi_gu_vi/MapServer/34";
-
+*/
 
 var helpfileurl = "https://web.archive.org/web/20250000000000*/https://ejscreen.epa.gov/mapper/help/ejscreen_help.pdf";
 var glossaryurlEJIndexes = "https://web.archive.org/web/20250121194855/https://www.epa.gov/ejscreen/ej-index-descriptions";
@@ -133,9 +133,9 @@ var geocoderurl =
 
 var lookuptableindex = 0
 var ejmapindex = 0; //index of main ej layer in service
-var ejmapindex_state = 1; //index of state ej layer in service - maybe update to 1
+var ejmapindex_state = 0; //index of state ej layer in service
 var ejmapindexsupp = 0; 
-var ejmapindexsupp_state = 1; // maybe update to 1
+var ejmapindexsupp_state = 0; // maybe update to 1
 var bgIDfieldname = "ID";
 var recordlimit = 1000;
 var arealimit = 500; //set estimated area limit to 500 sq miles
@@ -2515,7 +2515,7 @@ var ejlayoutJSON = {
 	Primary: {
 		services: {			
 			"nation":{"url": ejscreenservice, "index" : 0, "titleSuffix" : "National Percentiles"}, 
-			"state":{"url": ejscreenservice_state, "index" : 1, "titleSuffix" : "State Percentiles"}
+			"state":{"url": ejscreenservice_state, "index" : 0, "titleSuffix" : "State Percentiles"}
 		},		
 		status: false,
 		description: "Primary EJ Indexes",
@@ -2607,7 +2607,7 @@ var ejlayoutJSON = {
 	Supplementary: {
 		services: {
 			"nation":{"url": ejscreenservice, "index" : 0, "titleSuffix" : "National Percentiles"},
-			"state":{"url": ejscreenservice_state, "index" : 1, "titleSuffix" : "State Percentiles"}
+			"state":{"url": ejscreenservice_state, "index" : 0, "titleSuffix" : "State Percentiles"}
 		},		
 		status: false,
 		description: "Supplemental Indexes",

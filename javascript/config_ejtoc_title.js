@@ -189,7 +189,7 @@ var ejJson = {
 						ejmapindex_state: ejmapindex_state,
 					},
 					B_D2_PWDIS: {
-						description: "Wastewater Discharge"+env_update+acs_update,
+						description: "Wastewater Discharge"+acs_update,
 						mouseover:"Average annual chemical concentrations in water weighted by relative toxicity",
 						legendtitle:
 							"EJ Index<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Wastewater Discharge",
@@ -581,7 +581,7 @@ var ejJson = {
 						ejmapindex_state: ejmapindex_state,
 					},
 					B_PWDIS: {
-						description: "Wastewater Discharge"+env_update,
+						description: "Wastewater Discharge",
 						mouseover: "Average annual chemical concentrations in water weighted by relative toxicity",
 						legendtitle:
 							"Environmental Data<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Wastewater Discharge",
@@ -850,7 +850,7 @@ var ejJson = {
 						ejmapindex_state: ejmapindex_state,
 					},
 					B_D5_PWDIS: {
-						description: "Wastewater Discharge"+env_update+acs_update,
+						description: "Wastewater Discharge"+acs_update,
 						mouseover: "Average annual chemical concentrations in water weighted by relative toxicity",
 						legendtitle:
 							"Supplemental Index<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Wastewater Discharge",
