@@ -673,8 +673,15 @@ define([
 			}
 		},
 		/*
-             a legend data normally have: {description,label,symbol,value}
-             */
+        legend data normally have: {description,label,symbol,value}
+		NB: as far as I can tell as of the release of v4.2024.0, there
+		are no active code paths to this function. But I'm reluctant
+		to simply delete it.
+		Meantime, note that despite its name, it is not involved in generating
+		the Map Contents legend boxes for the UI. That work is done down
+		in _createChildrenNodes.   
+		~ ag     
+		*/
 		_createLegendNode: function (rendLeg) {
 			this._noCheckNode = true;
 			domContruct.destroy(this.containerNode);
@@ -782,8 +789,46 @@ define([
 		 */
 		_createChildrenNodes: function (chdn, type) {
 			this.rootLayerTOC._currentIndent++;
-
+			console.log("In _createChildrenNodes for type", type)
 			if (type == "featurelegend") {
+				// As of v4.2024.0, we've lost the ability to insert good labels
+				// for our Map Contents legend boxes
+				// into our geodatabase. But we may get that ability back someday
+				// and, if so, we would want to use those labels.
+				// All the code here is fallback for when geodatabase 
+				// labels are not available, the expected case for now.
+				// This should resolve the secondary problem reported in
+				// https://github.com/Public-Environmental-Data-Partners/EJScreen/issues/91
+				if (chdn && chdn.fields && typeof dynamicJSON !== 'undefined') {
+					var lyType = chdn.maptype || chdn.layerType;
+					// Inject footerfields aliases into layer's field definitions
+					// so the ArcGIS Legend widget will display our custom labels	
+					//console.log("  Attempting to inject footerfields for layer type:", lyType);			
+					if (lyType && dynamicJSON[lyType] && dynamicJSON[lyType].footerfields && dynamicJSON[lyType].usefooteralias == true) {
+						//console.log("  Found footerfields for", lyType, "- injecting labels...");
+						chdn.fields.forEach(function(field) {
+							// Only inject if geodatabase alias is not set, which, by observation means
+							// if the alias is the same as the field name.
+							//console.log("  geodatabase alias for", field.name, ": |", field.alias, "|");
+							if (field.alias === field.name || field.alias === undefined || field.alias === "" || field.alias === null) {
+								var configJsAlias = dynamicJSON[lyType].footerfields[field.name];
+								if (configJsAlias) {
+									//console.log("    Setting field", field.name, "alias to:", configJsAlias);
+									field.alias = configJsAlias;
+								} 
+								else {
+									console.log("***Warning: no config.js alias found for", field.name);
+								}
+								// else, if we don't have a better name, do nothing here, which
+								// should keep the alias the same as the field name
+							}
+						});
+					}
+					// else, if we don't have footerfields, leave the alias values as is
+					// these have been observed to be same as field name, which is the best we can do here
+
+				}
+			
 				//var lgnstr = "<img src='images/ejlegend_new.png' alt='EJ legend' />";
 				var legend = new Legend({
 					view: this.mapView,
