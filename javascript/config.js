@@ -31,22 +31,23 @@ var enableGoogleTagManager = true;
 // require(["https://js.arcgis.com/4.20/esri/config"], function (esriConfig) { 
 require(["esri/config"], function (esriConfig) { 
 //Timeout in milliseconds for all esriRequests. Used for call to EJ services for reports.
-esriConfig.request.timeout = 120000; //2 minutes
+	esriConfig.request.timeout = 120000; //2 minutes
 });
 
-
 var localRESTurl = "https://services.arcgis.com/EXyRv0dqed53BmG2/arcgis/rest/services/";
-var ejscreenservice = localRESTurl + "EJSCREEN/FeatureServer/";
-var ejscreenservice_state =  ejscreenservice // localRESTurl + "EJScreenStatePercentilesBlockGroup/FeatureServer/";
+var ejscreenservice = localRESTurl + "EJSCREEN_4_2024_BG_with_AS_CNMI_GU_VI_US_gdb/FeatureServer/";
+var ejscreenservice_state = localRESTurl + "EJSCREEN_4_2024_BG_with_AS_CNMI_GU_VI_STATE_gdb/FeatureServer/";
+
 
 var prodRESTurl = "https://geopub.epa.gov/arcgis/rest/services/";
+/*
 //ej extra service for extra indicators in ej report section
 var ejscreenextraservice = localRESTurl + "ejscreen/ejscreen_extra/MapServer";
 //ej demog for demog section of ej report
 var ejscreendemogservice = localRESTurl + "ejscreen/ejquery/MapServer";
 var ejscreenApiPageUrl =
 	localRESTurl + "ejscreen/ejscreen_v2024_with_as_cnmi_gu_vi/MapServer/exts/EJCensusReports/GetEJScreen";
-
+*/
 
 
 // --- EJAM integration endpoints (single source of truth) -------------------
@@ -58,6 +59,7 @@ window.EJAM_API_BASE = "https://api.ejanalysis.com"; // EJAM REST API base (no t
 window.EJAM_APP_URL  = "https://ejam.publicenvirodata.org/";              // live EJAM web app
 
 
+/*
 var ejscreenservice4SOE = ejscreenservice;
 //to do: needed still?
 var ejscreenservice4SOE_SUPP = localRESTurl + "ejscreen/ejscreen_v2024_with_as_cnmi_gu_vi/MapServer";
@@ -71,20 +73,19 @@ var ejcitySOEurl = ejscreenservice4SOE + "/exts/EJCensusReports/GetEJScreen";
 var ejscreenSOEurl_SUPP = ejscreenservice4SOE_SUPP + "/exts/EJScreen_EJReports/GetEJScreen";
 //to do: needed still?
 var ejcitySOEurl_SUPP = ejscreenservice4SOE_SUPP + "/exts/EJScreen_EJReports/GetEJScreenByCity";
+*/
 
 
 //lookup table with ej and supplemental labels
-//to do: needed still?
-var lookuptable_supp_url="https://geopub.epa.gov/arcgis/rest/services/ejscreen/ejlookupfull_2020/MapServer/1";
-
-var localGeometryService = localRESTurl + "Utilities/Geometry/GeometryServer";
+//var lookuptable_supp_url="https://geopub.epa.gov/arcgis/rest/services/ejscreen/ejlookupfull_2020/MapServer/1";
 //var localPrintService = localRESTurl + "Utilities/PrintingTools/GPServer/Export Web Map Task";
 //var localPrintService = "https://utility.arcgisonline.com/arcgis/rest/services/Utilities/PrintingTools/GPServer/Export Web Map Task";
 //var localPrintService = "https://map23.epa.gov/arcgis/rest/services/Utilities/PrintingTools/GPServer/Export Web Map Task";
 //var localPrintService = "https://epamap36.epa.gov/arcgis/rest/services/Utilities/PrintingTools/GPServer/Export Web Map Task";
+var localGeometryService = localRESTurl + "Utilities/Geometry/GeometryServer";
 var localPrintService = "https://geopub.epa.gov/arcgis/rest/services/Utilities/PrintingTools/GPServer/Export Web Map Task";
 
-
+/*
 //used by report digest
 var ejscreenindexurl = localRESTurl + "ejscreen/ejscreen_v2024_with_as_cnmi_gu_vi/MapServer/33/query";
 var ejscreenstateurl = localRESTurl + "ejscreen/ejscreen_v2024_with_as_cnmi_gu_vi/MapServer/35/query";
@@ -92,7 +93,7 @@ var ejscreenusaurl = localRESTurl + "ejscreen/ejscreen_v2024_with_as_cnmi_gu_vi/
 
 var ejscreenenvindexnationalurl = localRESTurl+"ejscreen/ejscreen_v2024_with_as_cnmi_gu_vi/MapServer/33";
 var ejscreenenvindexstateurl = localRESTurl+"ejscreen/ejscreen_v2024_with_as_cnmi_gu_vi/MapServer/34";
-
+*/
 // Sept 2026 eag: changing primary help and glossary URLs to pages we are maintaining in EJAM
 // This may not be the final resolution but it is a lot better than the shell out wayback machine pages.
 var helpfileurl = "https://public-environmental-data-partners.github.io/EJAM/articles/ejscreen.html";
@@ -114,9 +115,9 @@ var geocoderurl =
 
 var lookuptableindex = 0
 var ejmapindex = 0; //index of main ej layer in service
-var ejmapindex_state = 1; //index of state ej layer in service - maybe update to 1
+var ejmapindex_state = 0; //index of state ej layer in service
 var ejmapindexsupp = 0; 
-var ejmapindexsupp_state = 1; // maybe update to 1
+var ejmapindexsupp_state = 0; // maybe update to 1
 var bgIDfieldname = "ID";
 var recordlimit = 1000;
 var arealimit = 500; //set estimated area limit to 500 sq miles
@@ -2317,13 +2318,134 @@ var typelookup = {
 
 var footerSkipAryConfig = ["T_PEOPCOLORPCT","T_OVER64PCT","T_UNDER5PCT","T_LESSHSPCT","T_LINGISOPCT","T_LOWINCPCT","T_DEMOGIDX_2","T_DEMOGIDX_5","T_UNEMPPCT","T_DISABILITYPCT"];
 
-
+// as of v4.2024.0 the number of key/value pairs in the footerfields was expanded to hold
+// all of the alias values that used to be stored in our geodatabases. If we ever figure out
+// a way to get the aliases back into those geodatabases using our new, open-source tool set
+// the values should be moved there and removed from here.
+// See https://github.com/Public-Environmental-Data-Partners/EJScreen/issues/91
 var dynamicJSON = {
 	ejscreen: {
 		description: "EJ Indexes",
 		headerfields: {},
-		footerfields: { "T_LOWINCPCT": "Low Income","T_PEOPCOLORPCT": "People of Color" },
-		usefooteralias: false,
+		footerfields: { "T_LOWINCPCT": "Low Income","T_PEOPCOLORPCT": "People of Color",
+			"OBJECTID": "Unique ID for block group in geodatabase", "Shape": "Coordinates defining the features",
+			"ID": "Census FIPS code for block group", "STATE_NAME": "Name of state",
+			"ST_ABBREV": "Two-letter abbreviation for state", "CNTY_NAME": "County Name",
+			"REGION": "US EPA region number", "ACSTOTPOP": "Total population",
+			"ACSIPOVBAS": "Population for whom poverty status is determined", "ACSEDUCBAS": "Population 25 years and over",
+			"ACSTOTHH": "Households (for limited English speaking)", "ACSTOTHU": "Housing units (for % built pre-1960)",
+			"ACSUNEMPBAS": "Unemployment base--persons in civilian labor force (unemployment rate)", "ACSDISABBAS": "Disability base--civilian non-institutionalized population",
+			"DEMOGIDX_2": "Demographic Index ", "DEMOGIDX_5": "Supplemental Demographic Index",
+			"PEOPCOLOR": "People of color", "PEOPCOLORPCT": "% people of color",
+			"LOWINCOME": "Low income", "LOWINCPCT": "% low income",
+			"UNEMPLOYED": "Unemployed in civilian labor force", "UNEMPPCT": "% unemployed",
+			"DISABILITY": "Persons with disabilities", "DISABILITYPCT": "% persons with disabilities",
+			"LINGISO": "Limited English speaking households", "LINGISOPCT": "% Limited English speaking households",
+			"LESSHS": "Less than high school education", "LESSHSPCT": "% less than high school education",
+			"UNDER5": "Under age 5", "UNDER5PCT": "% under age 5",
+			"OVER64": "Over age 64", "OVER64PCT": "% over age 64",
+			"LIFEEXPPCT": "% low life expectancy", "PM25": "Particulate Matter 2.5",
+			"OZONE": "Ozone", "DSLPM": "Diesel particulate matter",
+			"RSEI_AIR": "Toxic Releases to Air", "PTRAF": "Traffic proximity",
+			"PRE1960": "Housing units built before 1960", "PRE1960PCT": "Lead Paint",
+			"PNPL": "Superfund proximity", "PRMP": "RMP facility proximity",
+			"PTSDF": "Hazardous waste proximity", "UST": "Underground storage tanks",
+			"PWDIS": "Wastewater discharge", "NO2": "Nitrogen Dioxide (NO2)",
+			"DWATER": "Drinking Water Non-Compliance", "D2_PM25": "Particulate Matter 2.5 EJ Index",
+			"D5_PM25": "Particulate Matter 2.5 Supplemental Index", "D2_OZONE": "Ozone EJ Index",
+			"D5_OZONE ": "Ozone Supplemental Index", "D2_DSLPM": "Diesel particulate matter EJ Index",
+			"D5_DSLPM ": "Diesel particulate matter Supplemental Index", "D2_RSEI_AIR": "Toxic Releases to Air EJ Index",
+			"D5_RSEI_AIR": "Toxic Releases to Air Supplemental Index", "D2_PTRAF": "Traffic proximity EJ Index",
+			"D5_PTRAF ": "Traffic proximity Supplemental Index", "D2_LDPNT": "Lead paint EJ Index",
+			"D5_LDPNT ": "Lead paint Supplemental Index", "D2_PNPL": "Superfund Proximity EJ Index",
+			"D5_PNPL ": "Superfund Proximity Supplemental Index", "D2_PRMP": "RMP Facility Proximity EJ Index",
+			"D5_PRMP ": "RMP Facility Proximity Supplemental Index", "D2_PTSDF": "Hazardous waste proximity EJ Index",
+			"D5_PTSDF ": "Hazardous waste proximity Supplemental Index", "D2_UST": "Underground storage tanks EJ Index",
+			"D5_UST ": "Underground storage tanks Supplemental Index", "D2_PWDIS": "Wastewater discharge EJ Index",
+			"D5_PWDIS ": "Wastewater discharge Supplemental Index", "D2_NO2": "Nitrogen Dioxide (NO2) EJ Index",
+			"D5_NO2": "Nitrogen Dioxide (NO2) Supplemental Index", "D2_DWATER": "Drinking Water Non-Compliance EJ Index",
+			"D5_DWATER": "Drinking Water Non-Compliance Supplemental Index", "P_DEMOGIDX_2": "Percentile for Demographic Index",
+			"P_DEMOGIDX_5": "Percentile for Supplemental Demographic Index", "P_PEOPCOLORPCT": "Percentile for % people of color",
+			"P_LOWINCPCT": "Percentile for % low income", "P_UNEMPPCT": "Percentile for % unemployed",
+			"P_DISABILITYPCT": "Percentile for % persons with disabilities", "P_LINGISOPCT": "Percentile for % limited English speaking",
+			"P_LESSHSPCT": "Percentile for % less than high school education", "P_UNDER5PCT": "Percentile for % under age 5",
+			"P_OVER64PCT": "Percentile for % over age 64", "P_LIFEEXPPCT": "Percentile for Low Life Expectancy",
+			"P_PM25": "Percentile for Particulate Matter 2.5", "P_OZONE": "Percentile for Ozone",
+			"P_DSLPM": "Percentile for  Diesel particulate matter", "P_RSEI_AIR": "Percentile for Toxic Releases to Air",
+			"P_PTRAF": "Percentile for Traffic proximity", "P_LDPNT": "Percentile for Lead paint",
+			"P_PNPL": "Percentile for Superfund proximity", "P_PRMP": "Percentile for RMP facility proximity",
+			"P_PTSDF": "Percentile for Hazardous waste proximity", "P_UST": "Percentile for Underground storage tanks",
+			"P_PWDIS": "Percentile for Wastewater discharge", "P_NO2": "Percentile for Nitrogen Dioxide (NO2)",
+			"P_DWATER": "Percentile for Drinking Water Non-Compliance", "P_D2_PM25": "Percentile for Particulate Matter 2.5 EJ Index",
+			"P_D5_PM25": "Percentile for Particulate Matter 2.5 Supplemental Index", "P_D2_OZONE": "Percentile for Ozone EJ Index",
+			"P_D5_OZONE": "Percentile for Ozone Supplemental Index", "P_D2_DSLPM": "Percentile for Diesel particulate matter EJ Index",
+			"P_D5_DSLPM": "Percentile for Diesel particulate matter Supplemental Index", "P_D2_RSEI_AIR": "Percentile for Toxic Releases to Air EJ Index",
+			"P_D5_RSEI_AIR": "Percentile for Toxic Releases to Air Supplemental Index", "P_D2_PTRAF": "Percentile for Traffic proximity EJ Index",
+			"P_D5_PTRAF": "Percentile for Traffic proximity Supplemental Index", "P_D2_LDPNT": "Percentile for Lead paint EJ Index",
+			"P_D5_LDPNT": "Percentile for Lead paint Supplemental Index", "P_D2_PNPL": "Percentile for Superfund proximity EJ Index",
+			"P_D5_PNPL": "Percentile for Superfund proximity Supplemental Index", "P_D2_PRMP": "Percentile for RMP Facility Proximity EJ Index",
+			"P_D5_PRMP": "Percentile for RMP Facility Proximity Supplemental Index", "P_D2_PTSDF": "Percentile for Hazardous waste proximity EJ Index",
+			"P_D5_PTSDF": "Percentile for Hazardous waste proximity Supplemental Index", "P_D2_UST": "Percentile for Underground storage tanks EJ Index",
+			"P_D5_UST": "Percentile for Underground storage tanks Supplemental Index", "P_D2_PWDIS": "Percentile for Wastewater discharge EJ Index",
+			"P_D5_PWDIS": "Percentile for Wastewater discharge Supplemental Index", "P_D2_NO2": "Percentile for Nitrogen Dioxide (NO2) EJ Index",
+			"P_D5_NO2": "Percentile for Nitrogen Dioxide (NO2) Supplemental Index", "P_D2_DWATER": "Percentile for Drinking Water Non-Compliance EJ Index",
+			"P_D5_DWATER": "Percentile for Drinking Water Non-Compliance Supplemental Index", "B_DEMOGIDX_2": "Map color bin for Demographic Index",
+			"B_DEMOGIDX_5": "Map color bin for Supplemental Demographic Index", "B_PEOPCOLORPCT": "Map color bin for % people of color",
+			"B_LOWINCPCT": "Map color bin for % low income", "B_UNEMPPCT": "Map color bin for % unemployed",
+			"B_DISABILITYPCT": "Map color bin for % persons with disabilities", "B_LINGISOPCT": "Map color bin for % limited English speaking",
+			"B_LESSHSPCT": "Map color bin for % less than high school education", "B_UNDER5PCT": "Map color bin for % under age 5",
+			"B_OVER64PCT": "Map color bin for % over age 64", "B_LIFEEXPPCT": "Map color bin for Low Life Expectancy",
+			"B_PM25": "Map color bin for Particulate Matter 2.5", "B_OZONE": "Map color bin for Ozone",
+			"B_DSLPM": "Map color bin for  Diesel particulate matter", "B_RSEI_AIR": "Map color bin for Toxic Releases to Air",
+			"B_PTRAF": "Map color bin for Traffic proximity", "B_LDPNT": "Map color bin for Lead paint",
+			"B_PNPL": "Map color bin for Superfund proximity", "B_PRMP": "Map color bin for RMP facility proximity",
+			"B_PTSDF": "Map color bin for Hazardous waste proximity", "B_UST": "Map color bin for Underground storage tanks",
+			"B_PWDIS": "Map color bin for Wastewater discharge", "B_NO2": "Map color bin for Nitrogen Dioxide (NO2)",
+			"B_DWATER": "Map color bin for Drinking Water Non-Compliance", "B_D2_PM25": "Map color bin for Particulate Matter 2.5 EJ Index",
+			"B_D5_PM25": "Map color bin for Particulate Matter 2.5 Supplemental Index", "B_D2_OZONE": "Map color bin for Ozone EJ Index",
+			"B_D5_OZONE": "Map color bin for Ozone Supplemental Index", "B_D2_DSLPM": "Map color bin for  Diesel particulate matter EJ Index",
+			"B_D5_DSLPM": "Map color bin for  Diesel particulate matter Supplemental Index", "B_D2_RSEI_AIR": "Map color bin for Toxic Releases to Air EJ Index",
+			"B_D5_RSEI_AIR": "Map color bin for Toxic Releases to Air Supplemental Index", "B_D2_PTRAF": "Map color bin for Traffic proximity EJ Index",
+			"B_D5_PTRAF": "Map color bin for Traffic proximity Supplemental Index", "B_D2_LDPNT": "Map color bin for Lead paint EJ Index",
+			"B_D5_LDPNT": "Map color bin for Lead paint Supplemental Index", "B_D2_PNPL": "Map color bin for Superfund proximity EJ Index",
+			"B_D5_PNPL": "Map color bin for Superfund proximity Supplemental Index", "B_D2_PRMP": "Map color bin for RMP Facility Proximity EJ Index",
+			"B_D5_PRMP": "Map color bin for RMP Facility Proximity Supplemental Index", "B_D2_PTSDF": "Map color bin for Hazardous waste proximity EJ Index",
+			"B_D5_PTSDF": "Map color bin for Hazardous waste proximity Supplemental Index", "B_D2_UST": "Map color bin for Underground storage tanks EJ Index",
+			"B_D5_UST": "Map color bin for Underground storage tanks Supplemental Index", "B_D2_PWDIS": "Map color bin for Wastewater discharge EJ Index",
+			"B_D5_PWDIS": "Map color bin for Wastewater discharge Supplemental Index", "B_D2_NO2": "Map color bin for Nitrogen Dioxide (NO2) EJ Index",
+			"B_D5_NO2": "Map color bin for Nitrogen Dioxide (NO2) Supplemental Index", "B_D2_DWATER": "Map color bin for Drinking Water Non-Compliance EJ Index",
+			"B_D5_DWATER": "Map color bin for Drinking Water Non-Compliance Supplemental Index", "T_DEMOGIDX_2": "Map popup text for Demographic Index",
+			"T_DEMOGIDX_5": "Map popup text for Supplemental Demographic Index", "T_PEOPCOLORPCT": "Map popup text for % people of color",
+			"T_LOWINCPCT": "Map popup text for % low income", "T_UNEMPPCT": "Map popup text for % unemployed",
+			"T_DISABILITYPCT": "Map popup text for % persons with disabilities", "T_LINGISOPCT": "Map popup text for % limited English speaking",
+			"T_LESSHSPCT": "Map popup text for % less than high school education", "T_UNDER5PCT": "Map popup text for % under age 5",
+			"T_OVER64PCT": "Map popup text for % over age 64", "T_LIFEEXPPCT": "Map popup text for Low Life Expectancy",
+			"T_PM25": "Map popup text for Particulate Matter 2.5", "T_OZONE": "Map popup text for Ozone",
+			"T_DSLPM": "Map popup text for  Diesel particulate matter", "T_RSEI_AIR": "Map popup text for Toxic Releases to Air",
+			"T_PTRAF": "Map popup text for Traffic proximity", "T_LDPNT": "Map popup text for Lead paint",
+			"T_PNPL": "Map popup text for Superfund proximity", "T_PRMP": "Map popup text for RMP facility proximity",
+			"T_PTSDF": "Map popup text for Hazardous waste proximity", "T_UST": "Map popup text for Underground storage tanks",
+			"T_PWDIS": "Map popup text for Wastewater discharge", "T_NO2": "Map popup text for Nitrogen Dioxide (NO2)",
+			"T_DWATER": "Map popup text for Drinking Water Non-Compliance", "T_D2_PM25": "Map popup text for Particulate Matter 2.5 EJ Index",
+			"T_D5_PM25": "Map popup text for Particulate Matter 2.5 Supplemental Index", "T_D2_OZONE": "Map popup text for Ozone EJ Index",
+			"T_D5_OZONE": "Map popup text for Ozone Supplemental Index", "T_D2_DSLPM": "Map popup text for  Diesel particulate matter EJ Index",
+			"T_D5_DSLPM": "Map popup text for  Diesel particulate matter Supplemental Index", "T_D2_RSEI_AIR": "Map popup text for Toxic Releases to Air EJ Index",
+			"T_D5_RSEI_AIR": "Map popup text for Toxic Releases to Air Supplemental Index", "T_D2_PTRAF": "Map popup text for Traffic proximity EJ Index",
+			"T_D5_PTRAF": "Map popup text for Traffic proximity Supplemental Index", "T_D2_LDPNT": "Map popup text for Lead paint EJ Index",
+			"T_D5_LDPNT": "Map popup text for Lead paint Supplemental Index", "T_D2_PNPL": "Map popup text for Superfund proximity EJ Index",
+			"T_D5_PNPL": "Map popup text for Superfund proximity Supplemental Index", "T_D2_PRMP": "Map popup text for RMP Facility Proximity EJ Index",
+			"T_D5_PRMP": "Map popup text for RMP Facility Proximity Supplemental Index", "T_D2_PTSDF": "Map popup text for Hazardous waste proximity EJ Index",
+			"T_D5_PTSDF": "Map popup text for Hazardous waste proximity Supplemental Index", "T_D2_UST": "Map popup text for Underground storage tanks EJ Index",
+			"T_D5_UST": "Map popup text for Underground storage tanks Supplemental Index", "T_D2_PWDIS": "Map popup text for Wastewater discharge EJ Index",
+			"T_D5_PWDIS": "Map popup text for Wastewater discharge Supplemental Index", "T_D2_NO2": "Map popup text for Nitrogen Dioxide (NO2) EJ Index",
+			"T_D5_NO2": "Map popup text for Nitrogen Dioxide (NO2) Supplemental Index", "T_D2_DWATER": "Map popup text for Drinking Water Non-Compliance EJ Index",
+			"T_D5_DWATER": "Map popup text for Drinking Water Non-Compliance Supplemental Index", "AREALAND": "Land area in square meters",
+			"AREAWATER": "Water area in square meters", "NPL_CNT": "Number of Superfund facilities in the block group",
+			"TSDF_CNT": "Number of Hazardous waste facilities in the block group", "EXCEED2_COUNT_80": "Number of EJ Indexes exceeding 80 percentile",
+			"EXCEED2_COUNT_80_SUP": "Number of Supplemental Indexes exceeding 80 percentile", "Shape_Length": "Shape length",
+			"Shape_Area": "Shape area", "DEMOGIDX_2ST": "State Demographic Index",
+			"DEMOGIDX_5ST": "State Supplemental Demographic Index" },
+		usefooteralias: true, // true to use from here rather than from the service; updated layers don't have aliases
 		titlefields: { "ID": "FIPS", "CNTY_NAME": "County", "ST_ABBREV": "State", "STATE_NAME":"State Name","ACSTOTPOP": "Population" }
 	},
 	ejscreen_supp: {
@@ -2496,7 +2618,7 @@ var ejlayoutJSON = {
 	Primary: {
 		services: {			
 			"nation":{"url": ejscreenservice, "index" : 0, "titleSuffix" : "National Percentiles"}, 
-			"state":{"url": ejscreenservice_state, "index" : 1, "titleSuffix" : "State Percentiles"}
+			"state":{"url": ejscreenservice_state, "index" : 0, "titleSuffix" : "State Percentiles"}
 		},		
 		status: false,
 		description: "Primary EJ Indexes",
@@ -2588,7 +2710,7 @@ var ejlayoutJSON = {
 	Supplementary: {
 		services: {
 			"nation":{"url": ejscreenservice, "index" : 0, "titleSuffix" : "National Percentiles"},
-			"state":{"url": ejscreenservice_state, "index" : 1, "titleSuffix" : "State Percentiles"}
+			"state":{"url": ejscreenservice_state, "index" : 0, "titleSuffix" : "State Percentiles"}
 		},		
 		status: false,
 		description: "Supplemental Indexes",
