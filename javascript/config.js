@@ -2442,10 +2442,25 @@ var dynamicJSON = {
 			"T_D5_NO2": "Map popup text for Nitrogen Dioxide (NO2) Supplemental Index", "T_D2_DWATER": "Map popup text for Drinking Water Non-Compliance EJ Index",
 			"T_D5_DWATER": "Map popup text for Drinking Water Non-Compliance Supplemental Index", "AREALAND": "Land area in square meters",
 			"AREAWATER": "Water area in square meters", "NPL_CNT": "Number of Superfund facilities in the block group",
-			"TSDF_CNT": "Number of Hazardous waste facilities in the block group", "EXCEED2_COUNT_80": "Number of EJ Indexes exceeding 80 percentile",
-			"EXCEED2_COUNT_80_SUP": "Number of Supplemental Indexes exceeding 80 percentile", "Shape_Length": "Shape length",
-			"Shape_Area": "Shape area", "DEMOGIDX_2ST": "State Demographic Index",
-			"DEMOGIDX_5ST": "State Supplemental Demographic Index" },
+			"TSDF_CNT": "Number of Hazardous waste facilities in the block group", 
+			// The following two key/value pairs came in from Eric's spreadsheet, not sure why key starts with EXCEED2
+			"EXCEED2_COUNT_80": "Number of EJ Indexes exceeding 80 percentile",
+			"EXCEED2_COUNT_80_SUP": "Number of Supplemental Indexes exceeding 80 percentile", 
+			// Adding the following two sets to quiet runtime warnings -- not sure if/when they are used
+			"EXCEED_COUNT_80": "Number of EJ Indexes exceeding 80 percentile",
+			"EXCEED_COUNT_80_SUP": "Number of Supplemental Indexes exceeding 80 percentile", 			
+			"EXCEED_COUNT_90": "Number of EJ Indexes exceeding 90 percentile",
+			"EXCEED_COUNT_90_SUP": "Number of Supplemental Indexes exceeding 90 percentile", 
+			// Changing these key values to be what the UI is looking for
+			// They don't match the naming pattern for other keys but the code wants what the code wants
+			"SHAPE__Length": "Shape length",
+			"SHAPE__Area": "Shape area", 
+			"DEMOGIDX_2ST": "State Demographic Index",
+			"DEMOGIDX_5ST": "State Supplemental Demographic Index",
+			// Quiet the last of the runtime console warnings. Pulled text from EJAM map_headernames.
+			// Text is likely to need to be adjusted when seen in context.
+			"SYMBOLOGY_EXCEED_COUNT_80": "EJSCREEN symbology category for exceedance count"
+		},
 		usefooteralias: true, // true to use from here rather than from the service; updated layers don't have aliases
 		titlefields: { "ID": "FIPS", "CNTY_NAME": "County", "ST_ABBREV": "State", "STATE_NAME":"State Name","ACSTOTPOP": "Population" }
 	},
