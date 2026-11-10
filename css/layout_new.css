@@ -1078,7 +1078,9 @@ color:black;
     align-items: center;
     flex-direction: column;
     width: 430px; /* Smaller width */
-    height: 400px; /* Smaller height */
+    height: auto; /* Fixing so the text stops spilling off the background */ 
+    max-height: 90vh;
+    overflow-y: auto;
     position: fixed;
     top: 50%;
     left: 50%;
