@@ -1,6 +1,6 @@
 //controls label titles and order seen in TOC panel by category
-var env_update = '<br><div style="background-color: #0056b3; color: white; padding: 1px 4px; display: inline-block; font-family: sans-serif; font-size: 8px; font-weight: bold; border-radius: 2px;"> Latest Env Data (2022)</div>'
-var acs_update = '<br><div style="background-color: #b36b00; color: white; padding: 1px 4px; display: inline-block; font-family: sans-serif; font-size: 8px; font-weight: bold; border-radius: 2px;"> Latest Census Data (2024)</div>'
+var env_update = '<br><div style="background-color: #008817; color: white; padding: 1px 4px; display: inline-block; font-family: sans-serif; font-size: 8px; font-weight: bold; border-radius: 2px;"> Latest Env Data (2022)</div>'
+var acs_update = '<br><div style="background-color: #0BB445; color: white; padding: 1px 4px; display: inline-block; font-family: sans-serif; font-size: 8px; font-weight: bold; border-radius: 2px;"> Latest Census Data (2024)</div>'
 var ejJson = {
 	Primary: {
 		status: true,
