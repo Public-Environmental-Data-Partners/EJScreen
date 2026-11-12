@@ -94,15 +94,26 @@ var ejscreenusaurl = localRESTurl + "ejscreen/ejscreen_v2024_with_as_cnmi_gu_vi/
 var ejscreenenvindexnationalurl = localRESTurl+"ejscreen/ejscreen_v2024_with_as_cnmi_gu_vi/MapServer/33";
 var ejscreenenvindexstateurl = localRESTurl+"ejscreen/ejscreen_v2024_with_as_cnmi_gu_vi/MapServer/34";
 */
-// Sept 2026 eag: changing primary help and glossary URLs to pages we are maintaining in EJAM
-// This may not be the final resolution but it is a lot better than the shell out wayback machine pages.
-var helpfileurl = "https://public-environmental-data-partners.github.io/EJAM/articles/ejscreen.html";
-var glossaryurlEJIndexes = "https://web.archive.org/web/20250121194855/https://www.epa.gov/ejscreen/ej-index-descriptions";
-var glossaryurlSuppIndexes = "https://web.archive.org/web/20241202134502/https://www.epa.gov/ejscreen/supplemental-index-descriptions";
+
+// EJAM has a system for ensuring that github.io/EJAM/articles links always
+// direct to whatever it considers the "latest" release content. Which is 
+// the current published version until the next version is published.
+// This makes it difficult to test docs before release
+// But there's an alternate URL path that does work before release.
+// We want to be able to use it as we test.
+var USE_DEV_SHIM = true;  // *** IMPORTANT: this boolean must be false for release
+var dev_shim = "";
+if (USE_DEV_SHIM) {
+	var dev_shim = "dev/";
+}
+var metaroot = `https://public-environmental-data-partners.github.io/EJAM/articles/${dev_shim}ejscreen-map-descriptions`; 
+var helpfileurl = `https://public-environmental-data-partners.github.io/EJAM/articles/${dev_shim}/ejscreen.html`;
+var glossaryurl =`https://public-environmental-data-partners.github.io/EJAM/articles/${dev_shim}/ejscreen-map-descriptions.html`;
+var glossaryurlEJIndexes = `https://public-environmental-data-partners.github.io/EJAM/articles/${dev_shim}/ej-index-descriptions`;
+var glossaryurlSuppIndexes =`https://public-environmental-data-partners.github.io/EJAM/articles/${dev_shim}/supplemental-index-descriptions`;
 //var glossaryurl = "https://www.epa.gov/ejscreen/glossary-ejscreen-terms";
 //var glossaryurl = "https://ejscreen.epa.gov/ejscreen23/ejscreen-map-descriptions3.html";
-var glossaryurl ="https://public-environmental-data-partners.github.io/EJAM/articles/ejscreen-map-descriptions.html";
-// var homeappurl = "http://localhost:8000"; --SH--What is this used for?
+// var homeappurl = "http://localhost:8000"; --SH--What is this used for?  --AG--This is the URL for local testing but I don't know when it is used in code
 var v1appurl = "ejscreen_v1/index.html";
 var countybndurl =
 	"//geopub.epa.gov/arcgis/rest/services/EMEF/Boundaries/MapServer/5/query";
@@ -145,8 +156,6 @@ var basemapGallery;
 
 var slrMouseOverTxt =
 	"Land at risk of permanent flooding when sea level rises. Over the next 30 years, scientists estimate a 1-3 foot rise along most of the U.S. coastline";
-// This routes to the main descriptors up on EJAM
-var metaroot = "https://public-environmental-data-partners.github.io/EJAM/articles/ejscreen-map-descriptions"; 
 var metanchors = {
 	//note: ej index anchors are in different section of config below, 
     //additional demog anchors are in TOC.js
