@@ -55,8 +55,8 @@ var ejscreenApiPageUrl =
 // "Multisite Tool" link in index.html, and the single-site report in
 // mapdijit/EJinfoWindow.js. Set these per deployment; the inline defaults in
 // those files are just fallbacks if these globals are ever unset.
-window.EJAM_API_BASE = "https://api.ejanalysis.com"; // EJAM REST API base (no trailing /report); Cloudflare proxy of the Cloud Run API -- report responses can be edge-cached (repeat reports in ms) and CORS is handled at the edge
-window.EJAM_APP_URL  = "https://ejam.publicenvirodata.org/";              // live EJAM web app
+window.EJAM_API_BASE = "https://api-archive.ejanalysis.com"; // EJAM REST API base (no trailing /report); Cloudflare proxy of the Cloud Run API -- report responses can be edge-cached (repeat reports in ms) and CORS is handled at the edge
+window.EJAM_APP_URL  = "https://ejamdev.ejanalysis.com/";              // live EJAM web app
 
 
 /*
@@ -734,7 +734,7 @@ var suggestservicesHEALTH = {
 		//layers: [{ id: 3, title: "Cancer" }],
 	},
 	personswithdisabilities: {
-		title: "Persons with Disabililties",
+		title: "Persons with Disabilities",
 		mouseover:"Percent of all persons with disabilities",
 		layerurl: "https://services2.arcgis.com/w4yiQqB14ZaAGzJq/arcgis/rest/services/HealthDisparitiesEJScreen/FeatureServer/4",
 		type: "featurelayer",
@@ -3879,8 +3879,8 @@ var toggledByButtons = [
 	"searchGeoPlatform",
 	"printButtonDiv",
 	"selectMultipleDiv",
-	"moreDemographicMaps",
-	"thresholdMaps",
+	//"moreDemographicMaps",
+	//"thresholdMaps",
 	"addShapeFile",
 	"addRemoteMaps",
 	"envJusticeMaps",

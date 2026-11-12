@@ -450,8 +450,8 @@ var doSplashScreen = true;
 			addEraseBtn();
 			addPrint();
 			addMeasure();
-			addDemogWidget();
-		    addThresholdWidget();
+			//addDemogWidget();
+		    //addThresholdWidget();
 			//addBookmarks();
 			addSessions();
 			//addBasemapGallery(); //use toggle now vs Basemap gallery on button
