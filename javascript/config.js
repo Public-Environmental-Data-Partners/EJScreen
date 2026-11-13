@@ -109,8 +109,8 @@ if (USE_DEV_SHIM) {
 var metaroot = `https://public-environmental-data-partners.github.io/EJAM/${dev_shim}articles/ejscreen-map-descriptions`; 
 var helpfileurl = `https://public-environmental-data-partners.github.io/EJAM/${dev_shim}articles/ejscreen.html`;
 var glossaryurl =`https://public-environmental-data-partners.github.io/EJAM/${dev_shim}articles/ejscreen-map-descriptions.html`;
-var glossaryurlEJIndexes = `https://public-environmental-data-partners.github.io/EJAM/${dev_shim}articlesej-index-descriptions`;
-var glossaryurlSuppIndexes =`https://public-environmental-data-partners.github.io/EJAM/${dev_shim}articlessupplemental-index-descriptions`;
+var glossaryurlEJIndexes = `https://public-environmental-data-partners.github.io/EJAM/${dev_shim}articles/ej-index-descriptions`;
+var glossaryurlSuppIndexes =`https://public-environmental-data-partners.github.io/EJAM/${dev_shim}articles/supplemental-index-descriptions`;
 //var glossaryurl = "https://www.epa.gov/ejscreen/glossary-ejscreen-terms";
 //var glossaryurl = "https://ejscreen.epa.gov/ejscreen23/ejscreen-map-descriptions3.html";
 // var homeappurl = "http://localhost:8000"; --SH--What is this used for?  --AG--This is the URL for local testing but I don't know when it is used in code
