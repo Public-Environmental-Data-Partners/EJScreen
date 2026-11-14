@@ -9,12 +9,12 @@
  EPA Authors:   SAIC, EPA OMS Contractor
 
  Created:     01/19/2024
- Updated:     September 2026
+ PEDP Updates:  2025 and beyond
  
 **********************************************************************************************************/ 
 
 
-//There are constants used from config.js file too
+// NB: There are constants used from the default.js file too
 
 // Version now tracks the EJAM release this EJScreen deployment is based on
 // (EJAM v3.YYYY.P, where YYYY is the ACS end-year vintage), so the header,
@@ -57,6 +57,12 @@ var ejscreenApiPageUrl =
 // those files are just fallbacks if these globals are ever unset.
 window.EJAM_API_BASE = "https://api-archive.ejanalysis.com"; // EJAM REST API base (no trailing /report); Cloudflare proxy of the Cloud Run API -- report responses can be edge-cached (repeat reports in ms) and CORS is handled at the edge
 window.EJAM_APP_URL  = "https://ejamdev.ejanalysis.com/";              // live EJAM web app
+
+// We need a stable URL to use for the frozen version.
+// As I understand it, right now, pre-hard-release of v.2024.0, this
+// points to the new version. But post release and ?forever after?
+// it will point to the frozen version.
+var frozenUrl = "https://pedp-ejscreen-archive.azurewebsites.net/index.html"
 
 
 /*

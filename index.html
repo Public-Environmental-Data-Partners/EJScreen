@@ -8,8 +8,7 @@
   * 
   * Author: SAIC, EPA OMS Contractor
   * Creation Date: 01/22/2024
-  * Last Updated: 01/22/2024
- 
+  * PEDP updates: 2025 and beyond 
   **************************************************************************************************** */
 -->
 <!DOCTYPE html>
@@ -156,6 +155,21 @@ body, html {
     <script src="."></script>
     <script src="https://js.arcgis.com/4.20/"></script>
     <script type="text/javascript" src="javascript/config.js"></script>
+    <script type="text/javascript">
+        // Populate splash screen content from config.js variables
+        document.addEventListener('DOMContentLoaded', function() {
+            // Populate version number
+            var versionSpan = document.getElementById('splash-version-number');
+            if (versionSpan && typeof versionNumber !== 'undefined') {
+                versionSpan.textContent = 'v' + versionNumber;
+            }
+            // Populate frozen archive URL
+            var frozenUrlLink = document.getElementById('splash-frozen-url');
+            if (frozenUrlLink && typeof frozenUrl !== 'undefined') {
+                frozenUrlLink.href = frozenUrl;
+            }
+        });
+    </script>
     <script type="text/javascript" src="javascript/defaults.js"></script>
     <script type="text/javascript" src="javascript/layout_new.js"></script>
     <script type="text/javascript" src="javascript/multisite.js"></script>
@@ -418,33 +432,33 @@ a[title]:hover:after {
          <div>
            <h4 style="text-align: center;font-weight:bold">Welcome!</h4>
            <p>
-             <b>This is an unofficial copy of EJScreen</b>, hosted by the <a href="https://screening-tools.com/" target="_blank">
-                 Public Environmental Data Partners</a>. 
-                 Some links and text may incorrectly suggest that this site is affiliated with the US Government.
-                </p>
-           <p>EJScreen is the environmental justice screening and mapping tool that
-             utilizes standard and nationally consistent data to highlight places that may
-             have higher environmental burdens and vulnerable populations.
+             <b>EJScreen</b> is the environmental justice screening and mapping tool that utilizes standard and nationally consistent data to highlight places that may have higher environmental burdens and more vulnerable populations. EJScreen was originally published and hosted by the U.S. Environmental Protection Agency (EPA).
            </p>
            <p>
-             The US EPA removed EJSCREEN v2.32 from public access in February 2025. This is a modern version (v4.2024.0) of EJSCREEN that includes updated indicators and will have updated features going forward. 
-             To view a "frozen" copy of EJSCREEN with the indicator data as last published by the EPA, please visit our archive <a href="https://pedp-ejscreen.azurewebsites.net/" target="_blank">here</a>.
+		     <!-- Note that the placeholder version number below will be replaced on render by a snippet of js that runs after config.js is loaded -->
+             This is an updated version, <span id="splash-version-number">v4</span>, maintained and hosted by the 
+             <a title="This link opens a new webpage."href="https://www.publicenvirodata.org/" target="_blank">Public Environmental Data Partners</a>, 
+             which includes updated demographic data from the 2020-2024 American Community Survey and some updated environmental indicators. 
+             See our most recent 
+             <a title="This link opens a new webpage." href="https://public-environmental-data-partners.github.io/EJAM/dev/news/index.html" target="_blank">Changelog</a> for details. 
+             Please 
+             <a title="This link opens a new webpage." href="https://ejscreen.fider.io/?statuses=planned,started,completed" target="_blank">help us prioritize our future feature and indicator improvements</a>.
            </p>
            <p>
-             First-time users may find the 5-minute  <a rel="external" title="This link opens a new webpage." target="_blank" href="https://web.archive.org/web/20241008150339/https://www.youtube.com/watch?v=HZp3AWDJt5A">EJScreen in 5: A Quick Overview of EJScreen</a> video helpful as an 
-             introduction to the tool.
+             To view a &quot;frozen&quot; copy of EJScreen (v3.2022.3) that is a mirror of the indicator data as last published by the EPA in February 2025, 
+             please visit our 
+             <a id="splash-frozen-url" title="This link opens a new webpage." href="https://pedp-ejscreen-archive.azurewebsites.net/" target="_blank">archived copy</a>. 
            </p>
-           <p>Other helpful resources include:</p>
+           <p>Helpful resources include:</p>
            <ul class="ul-spash">
              <li>
                <a target="_blank" rel="external" title="This link opens a new webpage." href="https://public-environmental-data-partners.github.io/EJAM/articles/ejscreen.html">EJScreen User Guide</a> for navigating the various features of the tool,
              </li>
              <li>
-               <a target="_blank" rel="external" title="This link opens a new webpage." href="https://public-environmental-data-partners.github.io/EJAM/articles/ejscreen-map-descriptions">EJScreen Glossary</a> for better understanding the map layers and
-               indicators being displayed in the tool, and
+               <a target="_blank" rel="external" title="This link opens a new webpage." href="https://public-environmental-data-partners.github.io/EJAM/articles/ejscreen-map-descriptions.html">EJScreen Glossary</a> for better understanding the map layers and indicators being displayed in the tool, and
              </li>
              <li>
-               <a target="_blank" rel="external" title="This link opens a new webpage." href="https://web.archive.org/web/20250123162243/https://www.epa.gov/ejscreen/frequent-questions-about-ejscreen">Frequent Questions about EJScreen</a>
+               <a target="_blank" rel="external" title="This link opens a new webpage." href="https://public-environmental-data-partners.github.io/EJAM/articles/frequent-questions-about-ejscreen.html">EJScreen FAQ</a>
              </li>
            </ul>		 
            <!-- <p>Please note that the EJScreen downloadable data was edited and updated on August 9, 2024. If you downloaded the EJScreen 2.3 data prior to this date, it is advisable to switch to the newest data. </p> -->
@@ -477,9 +491,9 @@ a[title]:hover:after {
  
      </div>
      <div id="webmapSubTitle" style="display: none;padding:2px";>
-             <div style="padding-left: 5px"><b>This is a copy of EJScreen</b> hosted by the <a href='https://www.publicenvirodata.org/' target='_blank'>
+             <div style="padding-left: 5px"><b>EJScreen</b> is hosted by the <a href='https://www.publicenvirodata.org/' target='_blank'>
                  Public Environmental Data Partners</a>.  Some links and text 
-                 may incorrectly suggest that this site is affiliated with the US Government.</em>
+                 may incorrectly suggest that this content is published by the US Government. It is not.</em>
              <br><i>Please note: Territory data (except Puerto Rico) is not available as comparable to the US. It is only comparable to the territory itself by using the 'Compare to State' functionality. Likewise, some of the indicators may not be available for territories.</i>
             </div>
             
