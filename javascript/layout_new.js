@@ -200,28 +200,25 @@ require([
 		"</td>";
 	titlestr =
 		titlestr + "<td valign='middle' align='right'><span id='homelinks'>";
-	// titlestr = titlestr + "<button type='button'  data-toggle='modal' data-target='#myModal'>Toggle Sidebar</button>";
-	/*titlestr =
-		titlestr +
-		"<a href='" +
-		homeappurl +
-		"' alt='Go to EJScreen home page' title='Go to EJScreen home page'>EJScreen Website</a>";
-	*/
+
 	titlestr = titlestr + '<a href="https://forms.gle/THDYe5R4Aeh5iV6X7" target="_blank" class="feedback-button">  Share data feedback  <svg class="external-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">    <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>    <polyline points="15 3 21 3 21 9"></polyline>    <line x1="10" y1="14" x2="21" y2="3"></line>  </svg></a> | '
 	titlestr =
 		titlestr +
-		"<a href='mobile/index.html' alt='Go to EJScreen mobile page' title='Go to EJScreen mobile page'>Mobile</a> | "; 
-	// Report a bug here?
+		" <a href='" +
+		roadmapurl + "' title='Go to the product roadmap' target='_blank'>Roadmap</a> | "; 
+	titlestr =
+		titlestr +
+		"<a href='mobile/index.html' title='Switch to EJScreen mobile view'>Mobile</a> | "; 
 	titlestr =
 		titlestr +
 		"<a href='" +
 		glossaryurl +
-		"' alt='Go to EJScreen glossary page' title='Go to EJScreen glossary page' target='_blank'>Glossary</a>";
+		"' title='Go to EJScreen glossary page' target='_blank'>Glossary</a>";
 	titlestr =
 		titlestr +
 		" | <a href='" +
 		helpfileurl +
-		"' alt='Go to help page' title='Go to help page' target='_blank'>Help</a>&emsp;";
+		"' title='Go to help page' target='_blank'>Help</a>&emsp;";
 	titlestr = titlestr + "</td></tr></table>";
 	
 

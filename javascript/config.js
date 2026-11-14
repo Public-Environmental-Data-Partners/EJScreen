@@ -115,6 +115,7 @@ if (USE_DEV_SHIM) {
 var metaroot = `https://public-environmental-data-partners.github.io/EJAM/${dev_shim}articles/ejscreen-map-descriptions`; 
 var helpfileurl = `https://public-environmental-data-partners.github.io/EJAM/${dev_shim}articles/ejscreen.html`;
 var glossaryurl =`https://public-environmental-data-partners.github.io/EJAM/${dev_shim}articles/ejscreen-map-descriptions.html`;
+var roadmapurl = `https://ejscreen.fider.io/?statuses=planned,started,completed`;
 var glossaryurlEJIndexes = `https://public-environmental-data-partners.github.io/EJAM/${dev_shim}articles/ej-index-descriptions`;
 var glossaryurlSuppIndexes =`https://public-environmental-data-partners.github.io/EJAM/${dev_shim}articles/supplemental-index-descriptions`;
 //var glossaryurl = "https://www.epa.gov/ejscreen/glossary-ejscreen-terms";
