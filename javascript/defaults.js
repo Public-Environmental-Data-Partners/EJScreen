@@ -1,4 +1,4 @@
-﻿var versionHover = '<div class="info-container"><div class="info-logo">?</div><div class="info-tooltip">The last EPA version of EJScreen before it was removed from public access in early February 2025 was v2.32 which PEDP has recreated as v3.2022.2. This is version is numbered ' + versionNumber +' to acknowledge the completion of several then-in-the-works features, updates to select environmental indicators, and the use of 2020-2024 American Community Survey data.</div></div>'
+﻿var versionHover = '<div class="info-container"><div class="info-logo">?</div><div class="info-tooltip">The last EPA version of EJScreen before it was removed from public access in early February 2025 was v2.32 which PEDP has recreated as v3.2022.2. This version is numbered ' + versionNumber +' to acknowledge the completion of several then-in-the-works features, updates to select environmental indicators, and the use of 2020-2024 American Community Survey data.</div></div>'
 var defaults = {
   //The ID for the map from ArcGIS.com
   //webmap: "f5b13dbed07c46cdb783cf361833aa6b",

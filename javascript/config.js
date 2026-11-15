@@ -62,8 +62,9 @@ window.EJAM_APP_URL  = "https://ejamdev.ejanalysis.com/";              // live E
 // As I understand it, right now, pre-hard-release of v.2024.0, this
 // points to the new version. But post release and ?forever after?
 // it will point to the frozen version.
-var frozenUrl = "https://pedp-ejscreen-archive.azurewebsites.net/index.html"
-
+// Value is per Eric's suggestion, see:
+// https://github.com/Public-Environmental-Data-Partners/EJScreen/issues/95#issuecomment-6883870620
+var frozenUrl = "https://ejscreen-archive.ejanalysis.com/"
 
 /*
 var ejscreenservice4SOE = ejscreenservice;
