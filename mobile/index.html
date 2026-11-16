@@ -1485,6 +1485,7 @@ var identifyJSON = {
             "dojo/dom-class",
             "mapdijit/MapEJIndexMoile_v4",
             "mapdijit/reportPanel_v4",
+            "mapdijit/fieldAliasHelper",
             // Calcite-maps
             "mapdijit/calcitemaps-v0.5",
             "mapdijit/calcitemaps-arcgis-support-v0.5",
@@ -1518,6 +1519,7 @@ var identifyJSON = {
             domClass,
             MapEJIndexMoile_v4,
             reportPanel,
+            fieldAliasHelper,
             CalciteMaps,
             CalciteMapsArcGIS
         ) {
@@ -1665,13 +1667,10 @@ var identifyJSON = {
 
             });
 
-            // Legend
-            var legendWidget = new Legend({
-                container: "legendDiv",
-                view: app.activeView
-            });
+            // Field aliases are now injected inline in the layer change listener
+            // (see above where EJ layers are detected)
 
-            // LayerList
+            // LayerList (create early, before we know about all layers)
             var layerWidget = new LayerList({
                 container: "layersDiv",
                 view: app.activeView
@@ -1711,6 +1710,50 @@ var identifyJSON = {
                 id: 'ejmapwg'
             }, 'ejdiv');
             ejwidget.startup();
+            
+            // Listen for layers being added to the map
+            console.log("[INIT] Layer listener set up");
+            var legendWidget; // Declare here so we can create it later
+            var layerChangeListener = app.map.layers.on("change", function(event) {
+                // console.log("Map layers changed! added:", event.added?.length, "removed:", event.removed?.length);
+                if (event.added && event.added.length > 0) {
+                    // Check if we have data layers (map-image or feature layers)
+                    var hasDataLayers = app.map.layers.some(function(layer) {
+                        // console.log("  Checking layer type:", layer.type, "id:", layer.id);
+                        return layer.type === "map-image" || layer.type === "feature";
+                    });
+                    // console.log("  hasDataLayers:", hasDataLayers, "legendWidget defined:", !!legendWidget);
+                    
+                    if (hasDataLayers && !legendWidget) {
+                        console.log("[LEGEND] Data layer detected, initializing legend and field aliases");
+                        
+                        // Inject field aliases into all layers
+                        if (app.map && app.map.layers) {
+                            app.map.layers.forEach(function(layer) {
+                                if (layer.type === "map-image" && layer.sublayers) {
+                                    // console.log("  Injecting aliases for MapImageLayer:", layer.id);
+                                    layer.sublayers.forEach(function(sublayer) {
+                                        fieldAliasHelper.injectFieldAliases(sublayer, dynamicJSON);
+                                    });
+                                } else if (layer.type === "feature") {
+                                    // console.log("  Waiting for FeatureLayer to load:", layer.id);
+                                    // Wait for the layer to load before injecting aliases
+                                    layer.load().then(function() {
+                                        // console.log("  FeatureLayer loaded, injecting aliases for:", layer.id);
+                                        fieldAliasHelper.injectFieldAliases(layer, dynamicJSON);
+                                    });
+                                }
+                            });
+                        }
+                        
+                        // Create the Legend widget
+                        legendWidget = new Legend({
+                            container: "legendDiv",
+                            view: app.activeView
+                        });
+                    }
+                }
+            });
             // Views
             function syncViews(fromView, toView) {
                 var viewPt = fromView.viewpoint.clone();
