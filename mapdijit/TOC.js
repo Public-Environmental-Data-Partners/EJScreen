@@ -1194,6 +1194,7 @@ define([
 		},
 		_getTextFromGlossary : function(ejmetaurl){
 			// ejmetaurl="http://localhost:4922/ejscreen-map-descriptions.html#ejin-pm25";
+			console.log(ejmetaurl)
 			var arrmeta = ejmetaurl.split("#");
 			var pname = location.pathname;
 			var pos = pname.lastIndexOf("/");
@@ -1213,10 +1214,14 @@ define([
 
 			  // Find the <li> element with an anchor tag child with id ejdesc
 			 
+					console.log(data)
+					console.log(arrmeta)
+
+					//<h4 id="particulate-matter-2-5-pm2-5">Particulate Matter 2.5 (PM2.5)<a class="anchor" aria-label="anchor" href="#particulate-matter-2-5-pm2-5"></a>
 
 			 // var descLi = doc.querySelector('li > strong > a#'+arrmeta[1]).parentNode.parentNode;
-			  var descLi =doc.querySelector('li > p >strong#'+arrmeta[1]).parentNode.parentNode;
-
+			  var descLi = doc.querySelector('#'+arrmeta[1]).parentNode;
+			  console.log(descLi)
 			//   var anchorTag = descLi.querySelector('p > strong');
 			
 	
@@ -1230,15 +1235,15 @@ define([
 			// Find all <a> tags within the temporary div
 			var anchorTags = tempDiv.querySelectorAll('a');
 
-			// Loop through each <a> tag and prepend 'https://www.epa.gov' to the href attribute
+			// Loop through each <a> tag and prepend 'https://public-environmental-data-partners.github.io/EJAM/dev/articles/' to the href attribute
 		
 			anchorTags.forEach(function(anchor) {
 				var href = anchor.getAttribute('href');
 
 				// Check if href exists and is a relative path
 				if (href && !href.startsWith('http://') && !href.startsWith('https://')) {
-					// Prepend 'https://www.epa.gov' to href attribute
-					anchor.setAttribute('href', 'https://www.epa.gov' + href);
+					// Prepend 'https://public-environmental-data-partners.github.io/EJAM/dev/articles/' to href attribute
+					anchor.setAttribute('href', 'https://public-environmental-data-partners.github.io/EJAM/dev/articles/' + href);
 				}
 				anchor.setAttribute('title', 'This link opens a new webpage.');
 				// Check if target="_blank" is already present or not
