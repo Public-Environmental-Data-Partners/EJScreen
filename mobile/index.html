@@ -1957,6 +1957,11 @@ var identifyJSON = {
                         var qurl = lyr.url + "/" + j;
                         var renderfield = lyr.renderField;
                         var ltype = lyr.layerType;
+
+                        // TODO: As of v4.2024.0, this outfields list is not longer
+                        // used, as far as I can tell, in favor of a simple "*" in the query.
+                        // The code that builds this list should go away, just not 
+                        // right now before release.  eag 2026 Nov
                         var outfields = [];
 
                         for (var afld in dynamicJSON[ltype].headerfields) {
@@ -2055,8 +2060,24 @@ var identifyJSON = {
 
                         query.returnGeometry = true;
                         query.geometry = evt.mapPoint;
-                        query.outFields = outfields;
+                        // 2026 Nov eag: mobile app used to send a huge list of specific field names
+                        // to the server. Main app only ask for "all" via a "*" parameter.
+                        // We're going to try the all approach now.
+                        // query.outFields = outfields;  // TODO: see if this means there's code to remove above
+                        query.outFields = ["*"];
+                        
+                        // DEBUG: Log outFields and URL for investigation
+                        console.log("[MOBILE_QUERY] Layer Type:", ltype);
+                        console.log("[MOBILE_QUERY] Query URL:", qurl);
+                        // Note this count is not for the query.outFields but rather for the 
+                        // elaborately constructed list-of-all fields above which are not used any more.
+                        console.log("[MOBILE_QUERY] outFields count:", outfields.length);
+                        //console.log("[MOBILE_QUERY] outFields:", outfields.join(","));
+                        //console.log("[MOBILE_QUERY] dynamicJSON[" + ltype + "] keys:", Object.keys(dynamicJSON[ltype] || {}));
                         var pctlevel = lyr.pctlevel;
+                        // TODO: this code is showing way too many fields in the constructed table
+                        // Take a look t the code in IDinfoWindow.js, around and below line 147
+                        // for how the main app filters results to jsut the 3 values it displays.
                         queryTask.execute(query).then(function (response) {
                             var results = response;
                             var fetcount = results.features.length;
@@ -2255,6 +2276,16 @@ var identifyJSON = {
                            var qpanel = dojo.query("#panelQuery");
                            if (!(domClass.contains(qpanel[0], "in"))) showpanel("#panelQuery");
                             app.activeView.graphics.removeAll();
+                        }).catch(function (error) {
+                            console.error("[MOBILE_QUERY_ERROR] Query failed for layer type:", ltype);
+                            console.error("[MOBILE_QUERY_ERROR] Error details:", error);
+                            if (error.message) {
+                                console.error("[MOBILE_QUERY_ERROR] Error message:", error.message);
+                            }
+                            if (error.details) {
+                                console.error("[MOBILE_QUERY_ERROR] Error details object:", error.details);
+                            }
+                            console.error("[MOBILE_QUERY_ERROR] Full error object:", JSON.stringify(error, null, 2));
                         })
                         /*  queryTask.execute(query).then(function (results) {
                   

@@ -147,6 +147,7 @@ define(
                         if (feat.layer.maptype == "ejscreen"){
                             //handle ejscreen ID here - used to be done in layout_new when it was map server image
                             //console.log("EJSCREEN LABELING")
+                            console.log("[MAIN_INFO_WINDOW] Processing ejscreen layer field:", fldObj.name);
                             var pctpattern = /^pct_/i;
                             var lyType = feat.layer.maptype
                             var formatObj = ejIdentifyJSON[feat.sourceLayer.renderField]
@@ -156,6 +157,7 @@ define(
                             //if footerfields are set in config, use those alias values for the alias instead of from service
                             //only apply if the usefooteralias is true, otherwise skip and use alias from service
                             if (dynamicJSON[lyType].footerfields[prop] && dynamicJSON[lyType].usefooteralias == true) {
+                                console.log("[MAIN_INFO_WINDOW] Using footerfield alias for:", prop);
                                 falias = dynamicJSON[lyType].footerfields[prop];
                             }
                             

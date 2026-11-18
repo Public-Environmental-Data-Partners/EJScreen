@@ -431,6 +431,9 @@ var doSplashScreen = true;
                 if (visible == false) {
                     view.graphics.removeAll();
                 }
+                else {
+                    console.log("[MAIN_APP_POPUP] Popup opened with feature:", view.popup.selectedFeature?.attributes);
+                }
                 //console.log("popup visible: ", visible);
             });
 
@@ -1412,6 +1415,13 @@ var doSplashScreen = true;
 						var outfields = Object.keys(dynamicJSON[ltype].headerfields);
 						outfields.push(lyr.renderField)
 						query.outFields = outfields;
+						
+						// DEBUG: Log outFields for comparison with mobile app
+						console.log("[MAIN_APP_QUERY] Layer Type (demog_more):", ltype);
+						console.log("[MAIN_APP_QUERY] Query URL:", qurl);
+						console.log("[MAIN_APP_QUERY] outFields count:", outfields.length);
+						console.log("[MAIN_APP_QUERY] outFields:", outfields.join(","));
+						
 						var queryreq = queryTask.execute(query);
 						deferlist.push(queryreq);
 						layerSaveArray.push(ltype);
@@ -1514,6 +1524,13 @@ var doSplashScreen = true;
 									query.geometry = evt.mapPoint;
 
 									query.outFields = outfields;
+									
+									// DEBUG: Log outFields for comparison with mobile app
+									console.log("[MAIN_APP_QUERY] Layer Type:", ltype);
+									console.log("[MAIN_APP_QUERY] Query URL:", qurl);
+									console.log("[MAIN_APP_QUERY] outFields count:", outfields.length);
+									console.log("[MAIN_APP_QUERY] outFields:", outfields.join(","));
+									
 									//var dirty = (new Date()).getTime();
 									//query.where = "1=1 AND " + dirty + "=" + dirty;
 									/* if (ltype == "ejscreen") {
