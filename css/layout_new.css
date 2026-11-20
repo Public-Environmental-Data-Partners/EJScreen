@@ -1298,3 +1298,84 @@ color:black;
     visibility: visible;
     opacity: 1;
 }
+
+
+/* ------------------------------------------------------------------
+   Release banner (issue #107)
+   Matches the Figma "USA Alert" (USWDS .usa-alert--info) design.
+   Fixed Figma widths/heights are left out so the banner stays responsive.
+   ------------------------------------------------------------------ */
+.pedp-alert {
+    position: relative;
+    z-index: 5;
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    padding: 0;
+    background: #E7F6F8;
+    color: #1B1B1B;
+    font-family: "Public Sans", "Source Sans Pro", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+}
+
+/* Indicator bar (8px, stretches to the banner's full height) */
+.pedp-alert--info {
+    border-left: 8px solid #5DC0D1;
+}
+
+/* Content: icon + text column */
+.pedp-alert__body {
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    gap: 14px;
+    padding: 16px 16px 16px 14px;
+    flex: 1 1 auto;
+    min-width: 0;
+}
+
+/* Indicator icon */
+.pedp-alert__icon {
+    flex: none;
+    width: 32px;
+    height: 32px;
+    fill: #1B1B1B;
+}
+
+/* Heading + text column */
+.pedp-alert__content {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 2px;
+    flex: 1 1 auto;
+    min-width: 0;
+}
+
+.pedp-alert__heading {
+    margin: 0;                  /* override Bootstrap h2 margins */
+    font-family: inherit;
+    font-style: normal;
+    font-weight: 700;
+    font-size: 18px; /* shrunk a bit since the original size was a little aggressive */
+    line-height: 1.8;
+    color: #1B1B1B;
+}
+
+.pedp-alert__text {
+    margin: 0;
+    font-style: normal;
+    font-weight: 400;
+    font-size: 13px; /* shrunk a bit since the original size was a little aggressive */ 
+    line-height: 1.8;        
+    color: #1B1B1B;
+}
+
+.pedp-alert a {
+    color: #005EA2;
+    text-decoration: underline;
+}
+
+.pedp-alert a:hover,
+.pedp-alert a:focus {
+    color: #1A4480;
+}

@@ -224,6 +224,8 @@ require([
 
 	document.getElementById("webmapTitle").innerHTML = titlestr;
 
+	layoutBelowHeader(); // accommodate banner
+
 var doTerritoryMessage = true;
 	//show territory message on start
 if (localStorage.getItem("doTerritoryMessage")){
@@ -3920,19 +3922,43 @@ function toggleContent(imgobj, divid) {
 	}
 }
 
-//toggle territor message and adjust map frame height as needed.
+// Height of the v4.2024.0 release banner (issue #107); 0 if it is absent or hidden.
+function getVersionBannerHeight(){
+	var banner = document.getElementById("versionBanner");
+	return (banner && banner.offsetParent !== null) ? banner.offsetHeight : 0;
+}
+
+// The map (#viewDiv) and side panel (#legendPan1) are absolutely positioned
+// with hard-coded tops, so push both down by the banner's height.
+function layoutBelowHeader(){
+	var bannerHeight = getVersionBannerHeight();
+	var subTitle = document.getElementById("webmapSubTitle");
+	var subTitleShown = subTitle && subTitle.style.display !== "none";
+
+	document.getElementById("viewDiv").style.top = ((subTitleShown ? 51 : 38) + bannerHeight) + "px";
+
+	var sidePanel = document.getElementById("legendPan1");
+	if (sidePanel) {
+		sidePanel.style.top = (53 + bannerHeight) + "px";
+	}
+}
+
+// The banner text can wrap on narrow windows, which changes its height.
+window.addEventListener("resize", layoutBelowHeader);
+
 function showTerritoryMessage(divId,mapDivId){
 	document.getElementById(divId).style.display = "block";
-	document.getElementById(mapDivId).style.top = "51px";	
-
+	layoutBelowHeader();
 }
 
 function hideTerritoryMessage(divId,mapDivId){
 	document.getElementById(divId).style.display = "none";
-	document.getElementById(mapDivId).style.top = "38px";
+	layoutBelowHeader();
 	localStorage.setItem("doTerritoryMessage",false);
 
 }
+
+
 function showSplashScreen(){
 	document.getElementById('splash-screen').style.display = "block";	
 }

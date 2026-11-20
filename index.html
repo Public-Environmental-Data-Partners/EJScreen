@@ -163,6 +163,18 @@ body, html {
             if (versionSpan && typeof versionNumber !== 'undefined') {
                 versionSpan.textContent = 'v' + versionNumber;
             }
+
+            // Populate release banner version 
+            var bannerVerion = document.getElementById('banner-version-number');
+            if (bannerVersion && typeof versionNumber !== 'undefined') {
+                bannerVersion.textContent = 'v' + versionNumber;
+            }
+
+            var bannerFrozenUrl = document.getElementById('banner-frozen-url');
+            if (bannerFrozenUrl && typeof frozenUrl !== 'undefined') {
+                bannerFrozenUrl.href = frozenUrl;
+            }
+
             // Populate frozen archive URL
             var frozenUrlLink = document.getElementById('splash-frozen-url');
             if (frozenUrlLink && typeof frozenUrl !== 'undefined') {
@@ -490,6 +502,28 @@ a[title]:hover:after {
              </div> -->
  
      </div>
+
+     <!-- START banner code -->
+     <section id="versionBanner" class="pedp-alert pedp-alert--info" aria-label="Site version announcement">
+         <div class="pedp-alert__body">
+             <!-- USWDS "info" icon -->
+             <svg class="pedp-alert__icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                <!-- This draws the "i" icon -->
+                 <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/>
+             </svg>
+             <div class="pedp-alert__content">
+                 <h2 class="pedp-alert__heading">New Release on January 2027 - Partially Updated Datasets</h2>
+                 <p class="pedp-alert__text">
+                     This new version of EJScreen (<span id="banner-version-number">v4.2024.0</span>) makes all updated demographic and some environmental data available. To view
+                     and use the version removed by the Environmental Protection Agency (EPA) in January 2025, visit our
+                     <a id="banner-frozen-url" href="https://pedp-ejscreen-archive.azurewebsites.net/" target="_blank" rel="noopener" title="This link opens a new webpage.">archive</a> (v3.2022.3).
+                 </p>
+             </div>
+         </div>
+     </section>
+     <!-- END banner code -->
+
+
      <div id="webmapSubTitle" style="display: none;padding:2px";>
              <div style="padding-left: 5px"><b>EJScreen</b> is hosted by the <a href='https://www.publicenvirodata.org/' target='_blank'>
                  Public Environmental Data Partners</a>.  Some links and text 
