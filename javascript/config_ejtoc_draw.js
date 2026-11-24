@@ -307,8 +307,8 @@ var layerJson = {
 	B_PM25: {
 		description: "Particulate Matter 2.5",
 		legendtitle: "Environmental Data Particulate Matter 2.5",
-		txtname: "T_PM25",
-		idfldname: "T_DEMOGIDX_2,PM25,T_PM25",
+		txtname: "T_PM25", // not actually used??
+		idfldname: "DEMOGIDX_2,PM25, P_PM25",
 		cat: "P_ENV",
 		hovertext:
 			"Environmental Indicators: Particulate Matter 2.5 - Fine particulate matter levels in the air",

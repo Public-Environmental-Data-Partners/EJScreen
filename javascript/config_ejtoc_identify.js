@@ -354,8 +354,8 @@ ejIdentifyJSON = {
 	B_PM25: {
 		description: "Particulate Matter 2.5",
 		legendtitle: "Environmental Data Particulate Matter 2.5",
-		txtname: "T_PM25",
-		idfldname: "T_DEMOGIDX_2,PM25,T_PM25",
+		txtname: "T_PM25", //not actually used?
+		idfldname: "DEMOGIDX_2,PM25,P_PM25",
 		cat: "P_ENV",
 		hovertext:
 			"Environmental Indicators: PM 2.5 - Annual average concentration of particles 2.5 microns or smaller in air",
@@ -364,8 +364,8 @@ ejIdentifyJSON = {
 			//optional format parameters
 			"suffixtext":{"PM25":"score","T_PM25":"percentile"},//text appended to alias, can be suffixtext or prefixtext
 			"aliasnew":{"PM25":"Particulate Matter 2.5"}, //override default alias
-			"signifdigits":{"PM25":3},//number of decimal places, if category is p_env this is used for significant digits
-			"units":{"PM25":"µg/m3"} //field unit of measure appended to value			
+			"signifdigits":{"PM25":3, "P_PM25": 3, "DEMOGIDX_2": 3},//number of decimal places, if category is p_env this is used for significant digits
+			"units":{"PM25":"µg/m3", "P_PM25": "%ile", "DEMOGIDX_2": ""} //field unit of measure appended to value			
 			}
 	},
 	B_OZONE: {

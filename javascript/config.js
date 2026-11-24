@@ -3823,6 +3823,12 @@ var globalDefaultSymbol4Pctiles = {
 	// },
 // ];
 
+/* NOTES TO SELF (EDN, NOV 23 2026)
+Currently, EJScreen hard codes class breaks. There's whole fields in the table dedicated to this. 
+Values 0 - 5.5 get written as less than 50 percentile, etc. (see below)
+Why not just use the percentile value directly??? P_PM25 instead of B_PM25?
+
+*/
 var globalClassBreaks4Pctiles = [
 	// {
 	// 	minValue: 0,

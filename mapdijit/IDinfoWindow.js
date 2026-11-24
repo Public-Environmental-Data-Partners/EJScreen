@@ -108,9 +108,10 @@ define(
             postCreate: function() {
                 var feat = this.idgraphic;
                 var templatestr = "";
-
+                console.log(feat)
                 for (var prop in feat.attributes) {
                     var fldvalue = feat.attributes[prop];
+                    console.log(fldvalue)
                     var proplabel = prop;
                     //if feature has layer info try to get alias for the field instead of default field name
 
@@ -133,7 +134,7 @@ define(
                     		} 
 
                     	}
-
+                        console.log(fldvalue)
                         var fldObj = feat.layer.fieldsIndex.get(prop);
 
                         if (fldObj) {                                            
@@ -148,6 +149,7 @@ define(
                             //handle ejscreen ID here - used to be done in layout_new when it was map server image
                             //console.log("EJSCREEN LABELING")
                             console.log("[MAIN_INFO_WINDOW] Processing ejscreen layer field:", fldObj.name);
+                            console.log(fldObj)
                             var pctpattern = /^pct_/i;
                             var lyType = feat.layer.maptype
                             var formatObj = ejIdentifyJSON[feat.sourceLayer.renderField]
@@ -172,6 +174,7 @@ define(
     
                             var fldvalue = fldvalue;
                             if (fldvalue == null) fldvalue = "N/A";
+                            console.log(fldvalue)
                             if (
                                 (pctpattern.test(prop) || prop == "POP_DEN") &&
                                 typeof fldvalue == "number"
@@ -199,42 +202,49 @@ define(
                                     if (typeof fldvalue === 'number') {//skip if N/A or non-numeric					
                                         fldvalue = fldvalue * formatObj.formatter.multiplier[prop];	
                                     }							
-                                }						
+                                }				
+                                console.log(fldvalue)		
                                 //format p_env using significant digit rounding to match SOE
                                 if (formatObj && formatObj.formatter && formatObj.formatter.signifdigits){
-                                    if (typeof fldvalue === 'number') {//skip if N/A or non-numeric									
+                                    if (typeof fldvalue === 'number') {//skip if N/A or non-numeric			
+                                            console.log(prop)						
                                             fldvalue = getEnvText(fldvalue,formatObj.formatter.signifdigits[prop])						
                                     }							
                                 }
+                                console.log(fldvalue)	
                                 //format values to round to match return from SOE
                                 if (formatObj && formatObj.formatter && formatObj.formatter.roundplaces){
                                     if (typeof fldvalue === 'number') {//skip if N/A or non-numeric									
                                             fldvalue = fldvalue.toFixed(formatObj.formatter.roundplaces[prop]);						
                                     }							
                                 }
+                                console.log(fldvalue)	
                                 //format decimal places or round p_env using significant digit rounding to match SOE
                                 if (formatObj && formatObj.formatter && formatObj.formatter.ispercent){	
                                     if (typeof fldvalue === 'number') {//skip if N/A or non-numeric		
                                             fldvalue = Math.round(fldvalue);
                                     }
-                                }		
+                                }
+                                console.log(fldvalue)			
                                 //NOTE: do any string operations to fldvalue after above, all above assumes number, after this all are string operations.
                                 
                                 //for all number values, format to show comma if > 1000
                                 if (typeof fldvalue === 'number') {
                                     fldvalue = fldvalue.toLocaleString("en-US");
                                 }
+                                console.log(fldvalue)	
     
                                 
                                 //append optional units to value
                                 if (formatObj && formatObj.formatter && formatObj.formatter.units && formatObj.formatter.units[prop] ){						
                                     fldvalue += " " + formatObj.formatter.units[prop];							
                                 }
-                                
+                                console.log(fldvalue)	
                                 //append optional % to value
                                 if (formatObj && formatObj.formatter && formatObj.formatter.pctsign && formatObj.formatter.pctsign[prop] ){						
                                     fldvalue += " " + formatObj.formatter.pctsign[prop];							
                                 }
+                                console.log(fldvalue)	
                             }
                             proplabel = falias
     
