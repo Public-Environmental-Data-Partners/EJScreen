@@ -304,7 +304,7 @@ var layerJson = {
 		category: "P_EJ5",
 		metalink: glossaryurlSuppIndexes + "#drinking"
 	},
-	B_PM25: {
+	P_PM25: {
 		description: "Particulate Matter 2.5",
 		legendtitle: "Environmental Data Particulate Matter 2.5",
 		txtname: "T_PM25", // not actually used??

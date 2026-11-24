@@ -406,7 +406,7 @@ var ejJson = {
 				metalink:
 					"https://www.epa.gov/ejscreen/glossary-ejscreen-terms#category-environmental",
 				columns: {
-					B_PM25: {
+					P_PM25: {
 						description: 'Particulate Matter 2.5'+env_update ,
 						mouseover: "Annual average concentration of particles 2.5 microns or smaller in air",
 						legendtitle: "Environmental Data Particular Matter 2.5",
